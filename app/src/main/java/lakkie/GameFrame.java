@@ -1,10 +1,17 @@
 package lakkie;
 
 import javax.swing.JFrame;
+
+import org.json.JSONObject;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class GameFrame extends JFrame implements WindowListener {
 
@@ -49,8 +56,19 @@ public class GameFrame extends JFrame implements WindowListener {
     @Override
     public void windowOpened(WindowEvent e) { }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new GameFrame();
+
+        InputStream scriptStream = GameFrame.class.getResourceAsStream("/TestScript.json");
+        BufferedReader scriptStreamReader = new BufferedReader(new InputStreamReader(scriptStream));
+        StringBuilder scriptContents = new StringBuilder();
+        String line;
+        while ((line = scriptStreamReader.readLine()) != null) {
+            scriptContents.append(line);
+        }
+
+        JSONObject scriptObj = new JSONObject(scriptContents.toString());
+        System.out.println(scriptObj);
     }
 
 }
