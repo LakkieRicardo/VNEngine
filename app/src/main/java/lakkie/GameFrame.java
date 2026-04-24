@@ -3,8 +3,12 @@ package lakkie;
 import javax.swing.JFrame;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
-public class GameFrame extends JFrame {
+public class GameFrame extends JFrame implements WindowListener {
+
+    private final GameRenderComponent gameRenderPanel;
 
     public GameFrame() {
         super("Game");
@@ -14,11 +18,36 @@ public class GameFrame extends JFrame {
         setSize(winW, winH);
         setLocationRelativeTo(null);
 
-        add(new GameRenderComponent());
+        gameRenderPanel = new GameRenderComponent();
+        add(gameRenderPanel);
 
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        addWindowListener(this);
     }
+
+    @Override
+    public void windowActivated(WindowEvent e) { }
+
+    @Override
+    public void windowClosed(WindowEvent e) { }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        gameRenderPanel.requestRedrawInterrupt();
+        System.exit(0);
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) { }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) { }
+
+    @Override
+    public void windowIconified(WindowEvent e) { }
+
+    @Override
+    public void windowOpened(WindowEvent e) { }
 
     public static void main(String[] args) {
         new GameFrame();
