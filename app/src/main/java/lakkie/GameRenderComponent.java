@@ -1,3 +1,5 @@
+package lakkie;
+
 import java.awt.Color;
 
 import javax.swing.JPanel;

@@ -1,5 +1,6 @@
+package lakkie;
+
 import javax.swing.JFrame;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
