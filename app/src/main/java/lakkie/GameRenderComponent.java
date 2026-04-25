@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -20,7 +21,13 @@ public class GameRenderComponent extends JPanel {
     private final Thread redrawThread;
     private String currentLine = "", currentCharName = "";
     private Color currentColor = Color.white;
-    private BufferedImage currentBackdrop;
+    private BufferedImage currentBackdrop = null;
+    private BufferedImage currentCharImg = null;
+    private boolean currentCharIsRight = false;
+    private boolean currentTextItalics = false;
+    private boolean renderTranscript = false;
+    private List<TranscriptLine> currentTranscript = null;
+    private float transcriptYOffset = 0f;
     private Thread uiDrawThread = null;
 
     public GameRenderComponent() {
@@ -72,11 +79,119 @@ public class GameRenderComponent extends JPanel {
         currentBackdrop = img;
     }
 
+    public boolean showTranscript() {
+        return renderTranscript;
+    }
+
+    public void setShowTranscript(boolean showTranscript) {
+        renderTranscript = showTranscript;
+    }
+
+    public void setCurrentCharImg(BufferedImage img) {
+        currentCharImg = img;
+    }
+
+    public void setCurrentCharIsRight(boolean isRight) {
+        currentCharIsRight = isRight;
+    }
+
+    public void setCurrentTextItalics(boolean isItalics) {
+        currentTextItalics = isItalics;
+    }
+
+    public void setTranscriptState(List<TranscriptLine> transcript) {
+        currentTranscript = transcript;
+    }
+
     private String[] wordSplit(String line) {
         if (line.contains(" ")) {
             return line.split(" ");
         } else {
             return new String[] { line };
+        }
+    }
+
+    private int calcTranscriptHeight(Graphics2D g2d) {
+        if (currentTranscript == null || currentTranscript.size() == 0) {
+            return 0;
+        }
+        int height = 0;
+        for (int i = 0; i < currentTranscript.size(); i++) {
+            TranscriptLine line = currentTranscript.get(i);
+            if (line.isItalics()) {
+                g2d.setFont(dlgFont_Medium.deriveFont(Font.ITALIC, 24.f));
+            } else {
+                g2d.setFont(dlgFont_Medium.deriveFont(24.f));
+            }
+            height += 48;
+            String lineText = line.line();
+            String[] words = wordSplit(lineText);
+            StringBuilder nextLine = new StringBuilder();
+            FontMetrics metrics = g2d.getFontMetrics();
+            for (String word : words) {
+                nextLine.append(word);
+                nextLine.append(' ');
+                int lineWidth = metrics.stringWidth(nextLine.toString());
+                int maxWidth = getWidth() - 16;
+                if (lineWidth > maxWidth) {
+                    height += 48;
+                    // Clear the string builder
+                    nextLine.setLength(0);
+                    nextLine.append(word);
+                    nextLine.append(' ');
+                }
+            }
+            if (nextLine.length() > 0) {
+                height += 48;
+            }
+            height += 16;
+        }
+
+        return height;
+    }
+
+    private void drawTranscript(Graphics2D g2d) {
+        if (currentTranscript == null) {
+            return;
+        }
+        if (Float.isNaN(transcriptYOffset)) {
+            transcriptYOffset = -calcTranscriptHeight(g2d) + getHeight() - 48;
+        }
+        int currentY = 32 + (int)transcriptYOffset;
+        for (int i = 0; i < currentTranscript.size(); i++) {
+            TranscriptLine line = currentTranscript.get(i);
+            if (line.isItalics()) {
+                g2d.setFont(dlgFont_Medium.deriveFont(Font.ITALIC, 24.f));
+            } else {
+                g2d.setFont(dlgFont_Medium.deriveFont(24.f));
+            }
+            g2d.setColor(line.color());
+            g2d.drawString(line.character(), 16, currentY);
+            currentY += 48;
+            String lineText = line.line();
+            String[] words = wordSplit(lineText);
+            StringBuilder nextLine = new StringBuilder();
+            FontMetrics metrics = g2d.getFontMetrics();
+            for (String word : words) {
+                String lineToRender = nextLine.toString();
+                nextLine.append(word);
+                nextLine.append(' ');
+                int lineWidth = metrics.stringWidth(nextLine.toString());
+                int maxWidth = getWidth() - 16;
+                if (lineWidth > maxWidth) {
+                    g2d.drawString(lineToRender, 32, currentY);
+                    currentY += 48;
+                    // Clear the string builder
+                    nextLine.setLength(0);
+                    nextLine.append(word);
+                    nextLine.append(' ');
+                }
+            }
+            if (nextLine.length() > 0) {
+                g2d.drawString(nextLine.toString(), 32, currentY);
+                currentY += 48;
+            }
+            currentY += 16;
         }
     }
 
@@ -86,6 +201,11 @@ public class GameRenderComponent extends JPanel {
         g.setColor(Color.black);
         g.fillRect(0, 0, getWidth(), getHeight());
 
+        if (renderTranscript) {
+            drawTranscript(g2d);
+            return;
+        }
+
         if (currentLine.length() == 0) {
             return;
         }
@@ -94,11 +214,13 @@ public class GameRenderComponent extends JPanel {
         GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(loadedSemibold);
         GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(loadedThin);
         
-        dlgFont_Medium = new Font("VALVE Oracle Medium", Font.PLAIN, 32);
-
         g2d.setColor(new Color(0x101010));
         g2d.fillRect(0, getHeight() - 48 * 6, getWidth(), 48 * 6);
-        g2d.setFont(dlgFont_Medium);
+        if (currentTextItalics) {
+            g2d.setFont(dlgFont_Medium.deriveFont(Font.ITALIC, 32.f));
+        } else {
+            g2d.setFont(dlgFont_Medium);
+        }
         g2d.setColor(currentColor);
         FontMetrics metrics = g2d.getFontMetrics();
         String[] words = wordSplit(currentLine);
@@ -106,6 +228,15 @@ public class GameRenderComponent extends JPanel {
         int numLines = 0;
         if (currentBackdrop != null) {
             g2d.drawImage(currentBackdrop, 0, 0, getWidth(), getHeight() - 48 * 6, null);
+        }
+        if (currentCharImg != null) {
+            int imgWidth = getWidth() / 3 - 32;
+            int imgHeight = getHeight() - 48 * 6 - 32;
+            if (currentCharIsRight) {
+                g2d.drawImage(currentCharImg, getWidth() - imgWidth - 32, 32, imgWidth, imgHeight, null);
+            } else {
+                g2d.drawImage(currentCharImg, 32, 32, imgWidth, imgHeight, null);
+            }
         }
         g2d.drawString(currentCharName, 32, getHeight() - 48 * 5);
         g2d.setStroke(new BasicStroke(4.f));
@@ -153,6 +284,16 @@ public class GameRenderComponent extends JPanel {
         if (!uiDrawThread.isAlive()) {
             System.out.println("UI Thread is no longer alive, killing redraw thread.");
         }
+    }
+
+    public static record TranscriptLine(String character, Color color, String line, boolean isItalics) { }
+
+    public void resetTranscriptScroll() {
+        transcriptYOffset = Float.NaN;
+    }
+
+    public void offsetTranscript(float amount) {
+        transcriptYOffset += amount;
     }
 
 }

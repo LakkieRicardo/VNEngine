@@ -1,31 +1,34 @@
 {
     "Characters": {
-        "MC": [255, 255, 255, "You", "/cat.png"],
-        "DM": [255, 0, 0, "The Doorman", "/doorman.png"],
-        "NR": [0, 255, 0, "", "/cat.png"]
+        "MC": [255, 255, 255, "You", "/cat.png", false, false],
+        "DM": [255, 0, 0, "The Doorman", "/doorman.png", true, false],
+        "DM_F": [255, 0, 0, "The Doorman", "/doorman_flustered.png", true, false],
+        "DM_A": [255, 0, 0, "The Doorman", "/doorman_angry.png", true, false],
+        "NR": [0, 255, 0, "", "/cat.png", false, true]
     },
     "Lines": [
+        "/baroness.png",
         "NR$Perhaps a night or two away from your parents isn't such a bad idea. Searching for your brother won't yield any results staying nestled with your parents.",
         "NR$You walk through the streets on your way to the Baroness, a strange yet welcoming hotel. While you have not stayed at the Baroness yourself, you've heard many rumors about it having abnormal events. ",
         "NR$The stories you have heard remind you of your favorite horror novels. While reading about paranormal activity is thrilling on paper, it might not be so attractive in real life…",
         "NR$Walking into the Baroness, you are surprised at the sheer volume of the room before you. The lobby is large and open, with many people chatting, lounging, and just plainly walking around. The room is filled with the sound of soft jazz and chatter. No immediate conversations strike you as interesting. ",
         "NR$As you get your bearings and walk towards the front desk, a tall man with ginger hair approaches you. His attire suggests that he works here and his piercing blue eyes gaze at you.",
-        "DM$Welcome to the Baroness.",
+        "DM_F$Welcome to the Baroness.",
         "NR$His voice is calm and collected. Everything about him seems too in place.",
         "DM$Do you have a reservation or are you walking in? ",
         "MC$Oh! I'm just walking in. I was wondering if I could get a room for the next two nights.",
-        "DM$Oh, for the next two nights? Normally, I would recommend all guests who wish to enjoy the hospitality of the Baroness to make reservations in advance, I understand the need for many walks of life to gather here at this time. ",
+        "DM_A$Oh, for the next two nights? Normally, I would recommend all guests who wish to enjoy the hospitality of the Baroness to make reservations in advance, I understand the need for many walks of life to gather here at this time. ",
         "MC$It's really no trouble if you have no space for me. I'm sure I can stay somewhere else.",
-        "DM$Oh no no. I did not mean to come across as untoward to your request. There is room for you here, miss. Shall I take your belongings to your room?",
+        "DM_F$Oh no no. I did not mean to come across as untoward to your request. There is room for you here, miss. Shall I take your belongings to your room?",
         "MC$Don't I have to check in or something first?",
         "DM$No need, I have already taken care of it.",
         "MC$But we just started talking.",
         "DM$Like I said, it's already taken care of.",
         "NR$His demeanor is off and you swear his eyes glow momentarily. Such a strange man…",
-        "DM$Might I have your name, miss?",
+        "DM_A$Might I have your name, miss?",
         "MC$Oh, right! I'm Paige. Nice to meet you… um?",
-        "DM$You may call me the Doorman.",
+        "DM_A$You may call me the Doorman.",
         "MC$Well, that's not your actual name is it?",
-        "DM$No, but for my purposes here, you may refer to me as the doorman.",
+        "DM_F$No, but for my purposes here, you may refer to me as the doorman.",
         "NR$His response strikes you as odd. Normally you'd expect staff to wear name tags, yet the man in front of you has no such thing."    ]
 }
