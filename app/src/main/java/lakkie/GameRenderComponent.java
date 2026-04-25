@@ -3,6 +3,7 @@ package lakkie;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -12,6 +13,9 @@ import java.awt.font.TextLayout;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -59,6 +63,14 @@ public class GameRenderComponent extends JPanel {
         currentLine = line;
     }
 
+    private String[] wordSplit(String line) {
+        if (line.contains(" ")) {
+            return line.split(" ");
+        } else {
+            return new String[] { line };
+        }
+    }
+
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
         g.setColor(Color.black);
@@ -76,42 +88,31 @@ public class GameRenderComponent extends JPanel {
 
         g2d.setFont(dlgFont_Medium);
         g2d.setColor(Color.white);
-        AttributedString attribLine = new AttributedString(currentLine);
-        AttributedCharacterIterator lineIt = attribLine.getIterator();
-        FontRenderContext fontCtx = g2d.getFontRenderContext();
-        LineBreakMeasurer breakMeasure = new LineBreakMeasurer(lineIt, fontCtx);
-        breakMeasure.setPosition(lineIt.getBeginIndex());
-        float breakWidth = (float)getSize().width;
-        float drawPosY = 0;
-        int paragraphEnd = lineIt.getEndIndex();
-
-        // Get lines until the entire paragraph has been displayed.
-        while (breakMeasure.getPosition() < paragraphEnd) {
-
-            // Retrieve next layout. A cleverer program would also cache
-            // these layouts until the component is re-sized.
-            TextLayout layout = breakMeasure.nextLayout(breakWidth);
-
-            // Compute pen x position. If the paragraph is right-to-left we
-            // will align the TextLayouts to the right edge of the panel.
-            // Note: this won't occur for the English text in this sample.
-            // Note: drawPosX is always where the LEFT of the text is placed.
-            float drawPosX = layout.isLeftToRight()
-                ? 0 : breakWidth - layout.getAdvance();
-
-            // Move y-coordinate by the ascent of the layout.
-            drawPosY += layout.getAscent();
-
-            // Draw the TextLayout at (drawPosX, drawPosY).
-            layout.draw(g2d, drawPosX, drawPosY);
-
-            // Move y-coordinate in preparation for next layout.
-            drawPosY += layout.getDescent() + layout.getLeading();
+        FontMetrics metrics = g2d.getFontMetrics();
+        String[] words = wordSplit(currentLine);
+        StringBuilder nextLine = new StringBuilder();
+        int numLines = 0;
+        for (String word : words) {
+            String lineToRender = nextLine.toString();
+            nextLine.append(word);
+            nextLine.append(' ');
+            int lineWidth = metrics.stringWidth(nextLine.toString());
+            int maxWidth = getWidth() - 16;
+            if (lineWidth > maxWidth) {
+                g2d.drawString(lineToRender, 16, 48 + numLines++ * 48);
+                // Clear the string builder
+                nextLine.setLength(0);
+                nextLine.append(word);
+                nextLine.append(' ');
+            }
+        }
+        if (nextLine.length() > 0) {
+            g2d.drawString(nextLine.toString(), 16, 48 + numLines++ * 48);
         }
     }
 
     private void handleRedraw() {
-        final int REDRAW_PER_SEC = 120, POLLS_PER_SEC = 1;
+        final int REDRAW_PER_SEC = 30, POLLS_PER_SEC = 1;
         long lastUpdateTime = System.currentTimeMillis();
         int numRedrawsSincePoll = 0;
         long lastPollTime = System.currentTimeMillis();
