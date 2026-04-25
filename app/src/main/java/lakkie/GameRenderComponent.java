@@ -1,5 +1,6 @@
 package lakkie;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -7,16 +8,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineBreakMeasurer;
-import java.awt.font.TextLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class GameRenderComponent extends JPanel {
@@ -24,7 +20,9 @@ public class GameRenderComponent extends JPanel {
     private Font loadedMedium, loadedSemibold, loadedThin;
     private Font dlgFont_Medium, dlgFont_Semibold, dlgFont_Thin;
     private final Thread redrawThread;
-    private String currentLine = "";
+    private String currentLine = "", currentCharName = "";
+    private Color currentColor = Color.white;
+    private BufferedImage currentBackdrop;
 
     public GameRenderComponent() {
         super();
@@ -63,6 +61,18 @@ public class GameRenderComponent extends JPanel {
         currentLine = line;
     }
 
+    public void setCurrentLineColor(Color color) {
+        currentColor = color;
+    }
+
+    public void setCurrentCharName(String charName) {
+        currentCharName = charName;
+    }
+
+    public void setCurrentBackdrop(BufferedImage img) {
+        currentBackdrop = img;
+    }
+
     private String[] wordSplit(String line) {
         if (line.contains(" ")) {
             return line.split(" ");
@@ -86,12 +96,20 @@ public class GameRenderComponent extends JPanel {
         
         dlgFont_Medium = new Font("VALVE Oracle Medium", Font.PLAIN, 32);
 
+        g2d.setColor(new Color(0x101010));
+        g2d.fillRect(0, getHeight() - 48 * 6, getWidth(), 48 * 6);
         g2d.setFont(dlgFont_Medium);
-        g2d.setColor(Color.white);
+        g2d.setColor(currentColor);
         FontMetrics metrics = g2d.getFontMetrics();
         String[] words = wordSplit(currentLine);
         StringBuilder nextLine = new StringBuilder();
         int numLines = 0;
+        if (currentBackdrop != null) {
+            g2d.drawImage(currentBackdrop, 0, 0, getWidth(), getHeight() - 48 * 6, null);
+        }
+        g2d.drawString(currentCharName, 32, getHeight() - 48 * 5);
+        g2d.setStroke(new BasicStroke(4.f));
+        g2d.drawLine(metrics.stringWidth(currentCharName) + 32 + 16, getHeight() - 48 * 5 - 8, getWidth() - 32, getHeight() - 48 * 5 - 8);
         for (String word : words) {
             String lineToRender = nextLine.toString();
             nextLine.append(word);
@@ -99,7 +117,7 @@ public class GameRenderComponent extends JPanel {
             int lineWidth = metrics.stringWidth(nextLine.toString());
             int maxWidth = getWidth() - 16;
             if (lineWidth > maxWidth) {
-                g2d.drawString(lineToRender, 16, 48 + numLines++ * 48);
+                g2d.drawString(lineToRender, 16, getHeight() - 48 * 4 + numLines++ * 48);
                 // Clear the string builder
                 nextLine.setLength(0);
                 nextLine.append(word);
@@ -107,7 +125,7 @@ public class GameRenderComponent extends JPanel {
             }
         }
         if (nextLine.length() > 0) {
-            g2d.drawString(nextLine.toString(), 16, 48 + numLines++ * 48);
+            g2d.drawString(nextLine.toString(), 16, getHeight() - 48 * 4 + numLines++ * 48);
         }
     }
 

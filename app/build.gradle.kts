@@ -8,6 +8,8 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    java
+    id("com.gradleup.shadow") version "9.4.1"
 }
 
 repositories {
@@ -35,4 +37,10 @@ java {
 application {
     // Define the main class for the application.
     mainClass = "lakkie.GameFrame"
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "lakkie.GameFrame"
+    }
 }
