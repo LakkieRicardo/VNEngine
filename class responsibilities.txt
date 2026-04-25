@@ -1,0 +1,14 @@
+graphics2d renderer:
+- handles animations
+- handles layout
+- reference to state(current dialog, character, backdrop, etc.)
+
+game:
+- state
+- reading script
+
+frame:
+- boilerplate for showing a window
+
+app:
+- starts the game

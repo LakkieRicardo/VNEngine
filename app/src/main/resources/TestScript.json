@@ -10,7 +10,7 @@
         "NR$The stories you have heard remind you of your favorite horror novels. While reading about paranormal activity is thrilling on paper, it might not be so attractive in real life…",
         "NR$Walking into the Baroness, you are surprised at the sheer volume of the room before you. The lobby is large and open, with many people chatting, lounging, and just plainly walking around. The room is filled with the sound of soft jazz and chatter. No immediate conversations strike you as interesting. ",
         "NR$As you get your bearings and walk towards the front desk, a tall man with ginger hair approaches you. His attire suggests that he works here and his piercing blue eyes gaze at you.",
-        "DM$Welcome to the Baroness. ",
+        "DM$Welcome to the Baroness.",
         "NR$His voice is calm and collected. Everything about him seems too in place.",
         "DM$Do you have a reservation or are you walking in? ",
         "MC$Oh! I'm just walking in. I was wondering if I could get a room for the next two nights.",
@@ -27,6 +27,5 @@
         "DM$You may call me the Doorman.",
         "MC$Well, that's not your actual name is it?",
         "DM$No, but for my purposes here, you may refer to me as the doorman.",
-        "NR$His response strikes you as odd. Normally you'd expect staff to wear name tags, yet the man in front of you has no such thing. "
-    ]
+        "NR$His response strikes you as odd. Normally you'd expect staff to wear name tags, yet the man in front of you has no such thing."    ]
 }

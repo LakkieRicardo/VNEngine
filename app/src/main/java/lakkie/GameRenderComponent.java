@@ -8,11 +8,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class GameRenderComponent extends JPanel {
@@ -23,6 +21,7 @@ public class GameRenderComponent extends JPanel {
     private String currentLine = "", currentCharName = "";
     private Color currentColor = Color.white;
     private BufferedImage currentBackdrop;
+    private Thread uiDrawThread = null;
 
     public GameRenderComponent() {
         super();
@@ -82,6 +81,7 @@ public class GameRenderComponent extends JPanel {
     }
 
     protected void paintComponent(Graphics g) {
+        uiDrawThread = Thread.currentThread();
         Graphics2D g2d = (Graphics2D)g;
         g.setColor(Color.black);
         g.fillRect(0, 0, getWidth(), getHeight());
@@ -134,7 +134,7 @@ public class GameRenderComponent extends JPanel {
         long lastUpdateTime = System.currentTimeMillis();
         int numRedrawsSincePoll = 0;
         long lastPollTime = System.currentTimeMillis();
-        while (!Thread.interrupted()) {
+        while (!Thread.interrupted() && ((uiDrawThread == null || uiDrawThread.isAlive()))) {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastUpdateTime > 1000 / REDRAW_PER_SEC) {
                 repaint();
@@ -149,6 +149,9 @@ public class GameRenderComponent extends JPanel {
         }
         if (Thread.interrupted()) {
             System.out.println("Redraw thread was interrupted.");
+        }
+        if (!uiDrawThread.isAlive()) {
+            System.out.println("UI Thread is no longer alive, killing redraw thread.");
         }
     }
 
