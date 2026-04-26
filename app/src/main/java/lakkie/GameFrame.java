@@ -18,10 +18,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +27,11 @@ import java.util.Map;
 public class GameFrame extends JFrame implements WindowListener, MouseListener, KeyListener, MouseWheelListener {
 
     private final GameRenderComponent gameRenderPanel;
+    private final GameState state;
 
-    public GameFrame() {
+    public GameFrame(GameState state) {
         super("Super Cool Deadlock Game");
+        this.state = state;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int winW = screenSize.width / 3 * 2;
         int winH = winW / 16 * 9;
@@ -218,31 +217,6 @@ public class GameFrame extends JFrame implements WindowListener, MouseListener, 
 
     @Override
     public void keyTyped(KeyEvent e) {
-    }
-
-    public static void main(String[] args) throws IOException {
-        game = new GameFrame();
-
-        InputStream scriptStream = GameFrame.class.getResourceAsStream("/TestScript.json");
-        BufferedReader scriptStreamReader = new BufferedReader(new InputStreamReader(scriptStream));
-        StringBuilder scriptContents = new StringBuilder();
-        String line;
-        while ((line = scriptStreamReader.readLine()) != null) {
-            scriptContents.append(line);
-        }
-
-        scriptObj = new JSONObject(scriptContents.toString());
-
-        String backdropImgName = scriptObj.getJSONArray("Lines").getString(0);
-        try {
-            BufferedImage backdropImg = ImageIO.read(GameRenderComponent.class.getResourceAsStream(backdropImgName));
-            game.setCurrentBackdrop(backdropImg);
-        } catch (IOException e) {
-            System.err.println("Failed to load backdrop image: ");
-            e.printStackTrace();
-        }
-
-        updateText();
     }
 
     @Override
