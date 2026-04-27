@@ -1,10 +1,6 @@
-package lakkie;
+package lakkie.state;
 
-import org.json.JSONObject;
-
-import lakkie.state.GameCharacter;
-import lakkie.state.GameScene;
-import lakkie.state.SceneLine;
+import lakkie.GameFrame;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -19,6 +15,9 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Stores all of the scenes and characters in the game and provides to the renderer what needs to be displayed.
+ */
 public class GameState {
     
     public static final String SCRIPT_FILE = "/TestScript.txt";
@@ -27,6 +26,11 @@ public class GameState {
     public final Map<String, GameCharacter> chars = new HashMap<>();
     public GameScene activeScene = null;
 
+    /**
+     * Parses the given script file and loads it into the game state.
+     * @param scriptFile The name of the script file to load.
+     * @throws IOException If the file contents could not be read or parsed.
+     */
     public GameState(String scriptFile) throws IOException {
         InputStream scriptStream = GameFrame.class.getResourceAsStream(scriptFile);
         BufferedReader scriptStreamReader = new BufferedReader(new InputStreamReader(scriptStream));
@@ -84,8 +88,6 @@ public class GameState {
                 System.exit(1);
             }
         }
-
-        
     }
 
     public List<String> parseArguments(int numExpected, String line) {
@@ -102,4 +104,58 @@ public class GameState {
         }
         return args;
     }
+
+    public Transcript getTranscript() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTranscript'");
+    }
+
+	public String line() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'line'");
+	}
+
+	public boolean lineItalics() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'lineItalics'");
+	}
+
+	public Color lineColor() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'lineColor'");
+	}
+
+	public BufferedImage backdrop() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'backdrop'");
+	}
+
+	public boolean charIsRight() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'charIsRight'");
+	}
+
+    public BufferedImage charImg() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'charImg'");
+    }
+
+	public String charName() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'charName'");
+	}
+
+    public void nextLine() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'nextLine'");
+    }
+
+    public void lastLine() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'lastLine'");
+    }
+
+    public static record Transcript(List<TranscriptLine> lines) { }
+
+    public static record TranscriptLine(String charId, Color color, String line, boolean isItalics) { }
 }

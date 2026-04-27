@@ -1,3 +1,5 @@
+# Test scene w/o choices
+
 AddChar MC
     SetCharName MC,You
     SetCharColor MC,255,255,255
