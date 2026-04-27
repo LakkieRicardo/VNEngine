@@ -25,6 +25,7 @@ public class GameState {
     public final List<GameScene> scenes = new ArrayList<>();
     public final Map<String, GameCharacter> chars = new HashMap<>();
     public GameScene activeScene = null;
+    private int lineIdx = 0;
 
     /**
      * Parses the given script file and loads it into the game state.
@@ -72,8 +73,9 @@ public class GameState {
                     List<String> args = parseArguments(3, line);
                     int sceneId = Integer.parseInt(args.get(0));
                     SceneLine sceneLine = new SceneLine();
-                    sceneLine.character = args.get(1);
+                    sceneLine.charId = args.get(1);
                     sceneLine.line = args.get(2);
+                    sceneLine.expression = "Default";
                     scenes.get(sceneId).lines.add(sceneLine);
                 } else if (command.equalsIgnoreCase("SelectScene")) {
                     List<String> args = parseArguments(1, line);
@@ -88,6 +90,8 @@ public class GameState {
                 System.exit(1);
             }
         }
+
+        updateStateCache();
     }
 
     public List<String> parseArguments(int numExpected, String line) {
@@ -105,54 +109,64 @@ public class GameState {
         return args;
     }
 
+    private Color currentCharColor = Color.white;
+    private String currentLine = "", currentCharName = "";
+    private boolean currentLineItalics = false, currentCharIsRight = false;
+    private BufferedImage currentCharImg = null, currentBackdrop = null;
+
+    private void updateStateCache() {
+        SceneLine line = activeScene.lines.get(lineIdx);
+        GameCharacter character = chars.get(line.charId);
+        currentCharColor = character.color;
+        currentLine = line.line;
+        currentLineItalics = character.isItalics;
+        currentCharIsRight = character.isRightSide;
+        currentCharImg = character.expressions.get(line.expression).sprite;
+        currentBackdrop = activeScene.backdrop;
+        currentCharName = character.name;
+    }
+
     public Transcript getTranscript() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getTranscript'");
     }
 
 	public String line() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'line'");
+		return currentLine;
 	}
 
 	public boolean lineItalics() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'lineItalics'");
+		return currentLineItalics;
 	}
 
 	public Color lineColor() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'lineColor'");
+		return currentCharColor;
 	}
 
 	public BufferedImage backdrop() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'backdrop'");
+		return currentBackdrop;
 	}
 
 	public boolean charIsRight() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'charIsRight'");
+		return currentCharIsRight;
 	}
 
     public BufferedImage charImg() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'charImg'");
+        return currentCharImg;
     }
 
 	public String charName() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'charName'");
+        return currentCharName;
 	}
 
     public void nextLine() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'nextLine'");
+        lineIdx = Math.min(activeScene.lines.size() - 1, lineIdx++);
+        updateStateCache();
     }
 
     public void lastLine() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'lastLine'");
+        lineIdx = Math.max(0, lineIdx--);
+        updateStateCache();
     }
 
     public static record Transcript(List<TranscriptLine> lines) { }
