@@ -6,7 +6,7 @@ AddChar MC
     AddExpression MC,Default,/cat.png
 AddChar DM
     SetCharName DM,The Doorman
-    SetCharColor DM,255,0,0
+    SetCharColor DM,108,40,51
     SetCharRight DM
     AddExpression DM,Default,/doorman.png
     AddExpression DM,Flustered,/doorman_flustered.png
