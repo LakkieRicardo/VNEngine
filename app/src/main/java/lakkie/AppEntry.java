@@ -17,7 +17,7 @@ public class AppEntry {
             state = null;
         }
 
-        GameFrame game = new GameFrame(state);
+        new GameFrame(state);
     }
 
 }

@@ -1,8 +1,6 @@
 package lakkie.state;
 
 import lakkie.GameFrame;
-import lakkie.state.GameState.Transcript;
-import lakkie.state.GameState.TranscriptLine;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
