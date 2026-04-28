@@ -1,6 +1,8 @@
 package lakkie.state;
 
 import lakkie.GameFrame;
+import lakkie.state.GameState.Transcript;
+import lakkie.state.GameState.TranscriptLine;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -42,7 +44,12 @@ public class GameState {
                 continue;
             }
             try {
-                String command = line.substring(0, line.indexOf(' '));
+                String command;
+                if (line.indexOf(' ') != -1) {
+                    command = line.substring(0, line.indexOf(' '));
+                } else {
+                    command = line.strip();
+                }
                 if (command.equalsIgnoreCase("AddChar")) {
                     List<String> args = parseArguments(1, line);
                     GameCharacter character = new GameCharacter();
@@ -57,11 +64,11 @@ public class GameState {
                                             Integer.parseInt(args.get(3)));
                     chars.get(args.get(0)).color = color;
                 } else if (command.equalsIgnoreCase("SetCharRight")) {
-                    List<String> args = parseArguments(2, line);
-                    chars.get(args.get(0)).isRightSide = args.get(1).equalsIgnoreCase("true");
+                    List<String> args = parseArguments(1, line);
+                    chars.get(args.get(0)).isRightSide = true;
                 } else if (command.equalsIgnoreCase("SetCharTextItalics")) {
-                    List<String> args = parseArguments(2, line);
-                    chars.get(args.get(0)).isItalics = args.get(1).equalsIgnoreCase("true");
+                    List<String> args = parseArguments(1, line);
+                    chars.get(args.get(0)).isItalics = true;
                 } else if (command.equalsIgnoreCase("StartScene")) {
                     scenes.add(new GameScene());
                 } else if (command.equalsIgnoreCase("SetBackdrop")) {
@@ -81,6 +88,12 @@ public class GameState {
                     List<String> args = parseArguments(1, line);
                     int sceneId = Integer.parseInt(args.get(0));
                     activeScene = scenes.get(sceneId);
+                } else if (command.equalsIgnoreCase("AddExpression")) {
+                    List<String> args = parseArguments(3, line);
+                    CharExpr expr = new CharExpr();
+                    expr.name = args.get(1);
+                    expr.sprite = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(2)));
+                    chars.get(args.get(0)).expressions.put(expr.name, expr);
                 } else {
                     throw new Exception(String.format("Failed to parse script line: Unrecognized command(%s)", command));
                 }
@@ -101,7 +114,7 @@ public class GameState {
             if (i == numExpected - 1) {
                 args.add(line.strip());
             } else {
-                int nextSpace = line.indexOf(' ');
+                int nextSpace = line.indexOf(',');
                 args.add(line.substring(0, nextSpace).strip());
                 line = line.substring(nextSpace + 1);
             }
@@ -109,63 +122,95 @@ public class GameState {
         return args;
     }
 
+    private Object stateCacheMutex = new Object();
     private Color currentCharColor = Color.white;
     private String currentLine = "", currentCharName = "";
     private boolean currentLineItalics = false, currentCharIsRight = false;
     private BufferedImage currentCharImg = null, currentBackdrop = null;
+    private Transcript transcript;
 
     private void updateStateCache() {
-        SceneLine line = activeScene.lines.get(lineIdx);
-        GameCharacter character = chars.get(line.charId);
-        currentCharColor = character.color;
-        currentLine = line.line;
-        currentLineItalics = character.isItalics;
-        currentCharIsRight = character.isRightSide;
-        currentCharImg = character.expressions.get(line.expression).sprite;
-        currentBackdrop = activeScene.backdrop;
-        currentCharName = character.name;
+        synchronized (stateCacheMutex) {
+            SceneLine line = activeScene.lines.get(lineIdx);
+            GameCharacter character = chars.get(line.charId);
+            currentCharColor = character.color;
+            currentLine = line.line;
+            currentLineItalics = character.isItalics;
+            currentCharIsRight = character.isRightSide;
+            currentCharImg = character.expressions.get(line.expression).sprite;
+            currentBackdrop = activeScene.backdrop;
+            currentCharName = character.name;
+            List<TranscriptLine> lines = new ArrayList<>();
+            transcript = new Transcript(lines);
+            for (int idx = 0; idx <= lineIdx; idx++) {
+                SceneLine sceneLine = activeScene.lines.get(idx);
+                lines.add(new TranscriptLine(sceneLine.charId,
+                    chars.get(sceneLine.charId).color,
+                    sceneLine.line,
+                    chars.get(sceneLine.charId).isItalics));
+            }
+        }
     }
 
     public Transcript getTranscript() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTranscript'");
+        synchronized (stateCacheMutex) {
+            return transcript;
+        }
     }
 
 	public String line() {
-		return currentLine;
+        synchronized (stateCacheMutex) {
+		    return currentLine;
+        }
 	}
 
 	public boolean lineItalics() {
-		return currentLineItalics;
+        synchronized (stateCacheMutex) {
+		    return currentLineItalics;
+        }
 	}
 
 	public Color lineColor() {
-		return currentCharColor;
+        synchronized (stateCacheMutex) {
+            return currentCharColor;
+        }
 	}
 
 	public BufferedImage backdrop() {
-		return currentBackdrop;
+		synchronized (stateCacheMutex) {
+            return currentBackdrop;
+        }
 	}
 
 	public boolean charIsRight() {
-		return currentCharIsRight;
+        synchronized (stateCacheMutex) {
+		    return currentCharIsRight;
+        }
 	}
 
     public BufferedImage charImg() {
-        return currentCharImg;
+        synchronized (stateCacheMutex) {
+            return currentCharImg;
+        }
     }
 
 	public String charName() {
-        return currentCharName;
+        synchronized (stateCacheMutex) {
+            return currentCharName;
+        }
 	}
 
     public void nextLine() {
-        lineIdx = Math.min(activeScene.lines.size() - 1, lineIdx++);
+        synchronized (stateCacheMutex) {
+            lineIdx = Math.min(activeScene.lines.size() - 1, lineIdx + 1);
+        }
         updateStateCache();
     }
 
     public void lastLine() {
-        lineIdx = Math.max(0, lineIdx--);
+        synchronized (stateCacheMutex) {
+            lineIdx = Math.max(0, lineIdx - 1);
+        }
         updateStateCache();
     }
 

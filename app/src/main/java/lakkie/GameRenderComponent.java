@@ -18,7 +18,7 @@ import lakkie.state.GameState.TranscriptLine;
 
 public class GameRenderComponent extends JPanel {
     
-    private Font loadedMedium, loadedSemibold, loadedThin;
+    private Font loadedMedium;
     private Font dlgFont_Medium;
     private final Thread redrawThread;
     private float transcriptYOffset = 0f;
@@ -171,19 +171,18 @@ public class GameRenderComponent extends JPanel {
         }
         
         GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(loadedMedium);
-        GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(loadedSemibold);
-        GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(loadedThin);
         
-        if (state.backdrop() != null) {
-            g2d.drawImage(state.backdrop(), 0, 0, getWidth(), getHeight() - 48 * 6, null);
-        }
-        g2d.setColor(new Color(0x101010));
-        g2d.fillRect(0, getHeight() - 48 * 6, getWidth(), 48 * 6);
         if (state.lineItalics()) {
             g2d.setFont(dlgFont_Medium.deriveFont(Font.ITALIC, 32.f));
         } else {
             g2d.setFont(dlgFont_Medium);
         }
+
+        if (state.backdrop() != null) {
+            g2d.drawImage(state.backdrop(), 0, 0, getWidth(), getHeight() - 48 * 6, null);
+        }
+        g2d.setColor(new Color(0x101010));
+        g2d.fillRect(0, getHeight() - 48 * 6, getWidth(), 48 * 6);
         g2d.setColor(state.lineColor());
         FontMetrics metrics = g2d.getFontMetrics();
         String[] words = wordSplit(state.line());
