@@ -1,7 +1,6 @@
 package lakkie.state;
 
 import lakkie.GameFrame;
-import lakkie.state.SceneContent;
 import lakkie.state.SceneContent.Label;
 import lakkie.state.SceneContent.Line;
 import lakkie.state.SceneContent.Redirect;
@@ -14,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

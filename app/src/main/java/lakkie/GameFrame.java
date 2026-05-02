@@ -120,11 +120,11 @@ public class GameFrame extends JFrame implements WindowListener, MouseListener, 
             state.lastLine();
         } else if (e.getKeyCode() == KeyEvent.VK_F2 || (e.getKeyCode() == KeyEvent.VK_ESCAPE && gameRenderPanel.showTranscript())) {
             gameRenderPanel.setShowTranscript(!gameRenderPanel.showTranscript());
-        } else if (e.getKeyCode() == KeyEvent.VK_DOWN && !gameRenderPanel.showTranscript()) {
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN && !gameRenderPanel.showTranscript() && state.isSelectionActive()) {
             gameRenderPanel.moveSelectionDown();
-        } else if (e.getKeyCode() == KeyEvent.VK_UP && !gameRenderPanel.showTranscript()) {
+        } else if (e.getKeyCode() == KeyEvent.VK_UP && !gameRenderPanel.showTranscript() && state.isSelectionActive()) {
             gameRenderPanel.moveSelectionUp();
-        } else if (e.getKeyCode() == KeyEvent.VK_ENTER && !gameRenderPanel.showTranscript()) {
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER && !gameRenderPanel.showTranscript() && state.isSelectionActive()) {
             try {
                 gameRenderPanel.chooseSelection();
             } catch (GameScriptException e1) {

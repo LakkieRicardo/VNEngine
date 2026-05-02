@@ -191,8 +191,9 @@ public class GameRenderComponent extends JPanel {
         StringBuilder nextLine = new StringBuilder();
         int numLines = 0;
         if (state.charImg() != null) {
-            int imgWidth = getWidth() / 3 - 32;
             int imgHeight = getHeight() - 48 * 6 - 32;
+            float imgAspectRatio = (float)state.charImg().getWidth() / state.charImg().getHeight();
+            int imgWidth = (int)(imgAspectRatio * imgHeight);
             if (state.charIsRight()) {
                 g2d.drawImage(state.charImg(), getWidth() - imgWidth - 32, 32, imgWidth, imgHeight, null);
             } else {

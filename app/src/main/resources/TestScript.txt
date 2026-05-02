@@ -3,7 +3,7 @@
 Char MC
     SetCharName You
     SetCharColor 255,255,255
-    AddExpression Default,/cat.png
+    AddExpression Default,/paige.png
 Char DM
     SetCharName The Doorman
     SetCharColor 108,40,51
@@ -16,67 +16,111 @@ Char NR
     SetCharColor 0,255,0
     SetCharTextItalics
     AddExpression Default,/cat.png
+Char PC
+    SetCharName Pocket
+    SetCharColor 48,82,47
+    SetCharRight
+    AddExpression Default,/pocket.png
+Char MN
+    SetCharName Mina
+    SetCharColor 103,13,15
+    SetCharRight
+    AddExpression Default,/cat.png
 
 Scene Intro_Baroness
     Backdrop /baroness.png
-    Line NR,Perhaps a night or two away from your parents isn't such a bad idea. Searching for your brother won't yield any results staying nestled with your parents.
-    Line NR,You walk through the streets on your way to the Baroness, a strange yet welcoming hotel. While you have not stayed at the Baroness yourself, you've heard many rumors about it having abnormal events.
-    Line NR,The stories you have heard remind you of your favorite horror novels. While reading about paranormal activity is thrilling on paper, it might not be so attractive in real life…
-    Line NR,Walking into the Baroness, you are surprised at the sheer volume of the room before you. The lobby is large and open, with many people chatting, lounging, and just plainly walking around. The room is filled with the sound of soft jazz and chatter. No immediate conversations strike you as interesting.
-    Line NR,As you get your bearings and walk towards the front desk, a tall man with ginger hair approaches you. His attire suggests that he works here and his piercing blue eyes gaze at you.
+    Line NR,Perhaps a night or two away from your parents isn't such a bad idea.
+    Line NR,Searching for your brother won't yield any results staying nestled with your parents.
+    Line NR,You walk through the streets on your way to the Baroness, a strange yet welcoming hotel.
+    Line NR,While you have not stayed at the Baroness yourself, you've heard many rumors about it having abnormal events.
+    Line NR,The stories you have heard remind you of your favorite horror novels.
+    Line NR,While reading about paranormal activity is thrilling on paper, it might not be so attractive in real life...
+    Line NR,Walking into the Baroness, you are surprised at the sheer volume of the room before you.
+    Line NR,The lobby is large and open, with many people chatting, lounging, and just plainly walking around.
+    Line NR,The room is filled with the sound of soft jazz and chatter.
+    Line NR,No immediate conversations strike you as interesting.
+    Line NR,As you get your bearings and walk towards the front desk, a tall man with ginger hair approaches you.
+    Line NR,His attire suggests that he works here and his piercing blue eyes gaze at you.
     Line DM,Welcome to the Baroness.
-    Line NR,His voice is calm and collected. Everything about him seems too in place.
+    Line NR,His voice is calm and collected.
+    Line NR,Everything about him seems too in place.
     Line DM,Do you have a reservation or are you walking in?
-    Line MC,Oh! I'm just walking in. I was wondering if I could get a room for the next two nights.
-    Line DM,Oh, for the next two nights? Normally, I would recommend all guests who wish to enjoy the hospitality of the Baroness to make reservations in advance, I understand the need for many walks of life to gather here at this time.
-    Line MC,It's really no trouble if you have no space for me. I'm sure I can stay somewhere else.
-    Line DM,Oh no no. I did not mean to come across as untoward to your request. There is room for you here, miss. Shall I take your belongings to your room?
+    Line MC,Oh! I'm just walking in.
+    Line MC,I was wondering if I could get a room for the next two nights.
+    Line DM,Oh, for the next two nights?
+    Line DM,Normally, I would recommend all guests who wish to enjoy the hospitality of the Baroness to make reservations in advance, I understand the need for many walks of life to gather here at this time.
+    Line MC,It's really no trouble if you have no space for me.
+    Line MC,I'm sure I can stay somewhere else.
+    Line DM,Oh no no. I did not mean to come across as untoward to your request.
+    Line DM,There is room for you here, miss.
+    Line DM,Shall I take your belongings to your room?
     Line MC,Don't I have to check in or something first?
     Line DM,No need, I have already taken care of it.
     Line MC,But we just started talking.
     Line MC,Like I said, it's already taken care of.
-    Line NR,His demeanor is off and you swear his eyes glow momentarily. Such a strange man…
+    Line NR,His demeanor is off and you swear his eyes glow momentarily.
+    Line NR,Such a strange man...
     Line DM,Might I have your name, miss?
-    Line MC,Oh, right! I'm Paige. Nice to meet you… um?
+    Line MC,Oh, right!
+    Line MC,I'm Paige.
+    Line MC,Nice to meet you... um?
     Line DM,You may call me the Doorman.
     Line MC,Well, that's not your actual name is it?
     Line DM,No, but for my purposes here, you may refer to me as the doorman.
-    Line NR,His response strikes you as odd. Normally you'd expect staff to wear name tags, yet the man in front of you has no such thing.
+    Line NR,His response strikes you as odd.
+    Line NR,Normally you'd expect staff to wear name tags, yet the man in front of you has no such thing.
     Selection
         Option A,Ask what his real name is.
         Option B,Ask him to show you to your room.
         Option C,Give him your belongings then explore the hotel.
     Label A
-        Line MC,But what’s your actual name?
+        Line MC,But what's your actual name?
         Line DM,It is of no concern for my time here. 
         Line MC,Hmm... Can I call you Brian?
         Line DM,No.
-        Line NR,While an awkward moment of silence would’ve rested itself between the two of you, the loud ambiance of the Baroness shoos it away.
+        Line NR,While an awkward moment of silence would've rested itself between the two of you, the loud ambiance of the Baroness shoos it away.
         Line DM,Come to think of it, I believe I have heard of you.
         Line MC,Me?
-        Line DM,Why yes. You are a bibliomancer, no?
-        Line MC,How’d you know?
-        Line DM,You read to children don’t you? I’ve heard through the grapevine that you are wonderful with children. Igniting their passion for reading using your amazing way of telling stories and bringing them to life.
-        Line MC,I-It’s not that impressive. But I am glad to hear people enjoy that.
-        Line DM,You should do a reading here at the Baroness. I’m sure our guests would love it!
-        Line MC,Maybe sometime soon, we’ll see.
-        Line DM,We shall see, indeed. Now, may I take your belongings?
+        Line DM,Why yes.
+        Line DM,You are a bibliomancer, no?
+        Line MC,How'd you know?
+        Line DM,You read to children don't you?
+        Line DM,I've heard through the grapevine that you are wonderful with children.
+        Line DM,Igniting their passion for reading using your amazing way of telling stories and bringing them to life.
+        Line MC,I-It's not that impressive.
+        Line MC,But I am glad to hear people enjoy that.
+        Line DM,You should do a reading here at the Baroness.
+        Line DM,I'm sure our guests would love it!
+        Line MC,Maybe sometime soon, we'll see.
+        Line DM,We shall see, indeed.
+        Line DM,Now, may I take your belongings?
         Redirect Todo_Scene
     Label B
         Line MC,Um, okay Doorman, can you show me to my room?
         Line DM,Of course! Follow me please.
-        Line NR,The two of you traverse the surprisingly complicated halls of the Baroness. You make it up to your room, noting the number 316.
+        Line NR,The two of you traverse the surprisingly complicated halls of the Baroness.
+        Line NR,You make it up to your room, noting the number 316.
         Line DM,Here is your key, miss.
-        Line NR,He extends his hand outward towards you. The key presented almost looks mint, the leather tag attached has the room number stamped into it. 
-        Line NR,You open the door to your room and enter. The doorman behind you enters with the bag that you brought. 
+        Line NR,He extends his hand outward towards you.
+        Line NR,The key presented almost looks mint, the leather tag attached has the room number stamped into it. 
+        Line NR,You open the door to your room and enter.
+        Line NR,The doorman behind you enters with the bag that you brought. 
         Line DM,Is that all you require?
         Line MC,Yes, thank you! 
-        Line NR,You watch as the doorman leaves the room. Once you hear his footsteps travel down the hall, you decide to make yourself comfortable. The room assigned to you seemed normal. Nothing was out of place. It was actually very neat and clean.
-        Line NR,Once unpacked, you realize how hungry you actually are. It’s probably time you decide where you’re going to have dinner
+        Line NR,You watch as the doorman leaves the room.
+        Line NR,Once you hear his footsteps travel down the hall, you decide to make yourself comfortable.
+        Line NR,The room assigned to you seemed normal.
+        Line NR,Nothing was out of place.
+        Line NR,It was actually very neat and clean.
+        Line NR,Once unpacked, you realize how hungry you actually are.
+        Line NR,It's probably time you decide where you're going to have dinner
         Redirect Baroness_Dinner
     Label C
-        Line MC,Actually, I’ll take you up on your offer regarding my belongings. I’m just gonna see what’s around the Baroness.
-        Line DM,Of course! There are many activities to partake in at the Baroness. May I offer some suggestions?
+        Line MC,Actually, I'll take you up on your offer regarding my belongings.
+        Line MC,I'm just gonna see what's around the Baroness.
+        Line DM,Of course!
+        Line DM,There are many activities to partake in at the Baroness.
+        Line DM,May I offer some suggestions?
         Selection
             Option C_A,Yes
             Option C_B,No
@@ -86,25 +130,323 @@ Scene Intro_Baroness
                 Line NR,He seems to ponder for a moment before continuing. 
                 Line DM,Perhaps you should enjoy the atmosphere of our indoor fountain while reading.
                 Line MC,That actually sounds like a great idea, thanks.
-                Line DM,Of course, and if you need anything do not be afraid to request me. Enjoy your stay at the Baroness.
-                Line NR,You watch as the Doorman walks off with your bag. The idea he suggested is agreeable with you, so you decide to walk towards the indoor fountain.
+                Line DM,Of course, and if you need anything do not be afraid to request me.
+                Line DM,Enjoy your stay at the Baroness.
+                Line NR,You watch as the Doorman walks off with your bag.
+                Line NR,The idea he suggested is agreeable with you, so you decide to walk towards the indoor fountain.
                 Redirect RoomYouEnter
             Label C_B
-                Line MC,I think I’m okay with finding my own way.
-                Line DM,Very well then, I shall bring your belongings to your room and leave you be. Do not be afraid to request me if you need anything. Enjoy your stay at the Baroness.
+                Line MC,I think I'm okay with finding my own way.
+                Line DM,Very well then, I shall bring your belongings to your room and leave you be.
+                Line DM,Do not be afraid to request me if you need anything.
+                Line DM,Enjoy your stay at the Baroness.
                 Redirect RoomYouEnter
 
+Scene RoomYouEnter
+    Line NR,The room you enter is somehow even larger than the lobby.
+    Line NR,The ceiling was in the shape of a dome, which strikes you as odd.
+    Line NR,From the outside, it didn't look like the Baroness hosted such a room. 
+	Line NR,You find a seat at a bench facing the grand fountain.
+    Line NR,You take the backpack you kept on you off.
+    Line NR,While you were comfortable with the Doorman taking your other bag, the one you keep your books could never leave your side.
+	Line NR,You spend the next hour or so enjoying the light atmosphere.
+    Line NR,The sound of water splashing is comforting as you read.
+    Line NR,But just as you really start to get into the plot, a strange figure catches your eye. 
+	Line NR,The figure somehow looks familiar to you.
+    Line NR,For a moment you thought it might be your brother, but upon further inspection it couldn't possibly be.
+    Line NR,They're wearing a pretty tattered cloak with a scarf.
+    Line NR,Bryce wouldn't wear anything like that.
+    Line NR,The tattered part sure but you recognize that it would be a nice coat if it was new.
+    Line NR,The figure also had black hair and a slimmer build.
+    Line NR,The more you tried to analyze them, the more your eyes started to wander towards what they were holding.
+    Line NR,It looked to be a simple briefcase, but if they were a guest here why would they still have their luggage? 
+	Line NR,While wondering this, it was pretty obvious that you were staring and the figure noticed.
+    Line NR,The two of you lock eyes. 
+    Selection
+        Option A,Wave at them
+        Option B,Go back to reading
+        Label A
+            Line NR,You wave at the strangely familiar person.
+            Line NR,Part of you hopes that they just move on, but once you wave they begin to walk over.
+            Line NR,They open up the conversation suddenly.
+            Line PC,If my father sent you to finish the job then I advise you to back off.
+            Line MC,Woah, woah!
+            Line MC,I don't know who your father is or who you are, for a matter of fact.
+            Line MC,I just thought at first you were somebody I'm looking for then I realized you weren't.
+            Line MC,So then I realized that you did look familiar, but I still can't place it and that briefcase of yours looks interesting...
+            Line NR,The person before you relaxes their tense face, realizing that you aren't a threat.
+            Line PC,I'm sorry.
+            Line PC,It's just been a long couple of days.
+            Line MC,I get that. 
+            Line PC,You too?
+            Line MC,I feel like I'm running out of options at this point.
+            Line MC,Do you know someone named Bryce?
+            Line MC,He's my brother and I just really want to find him.
+            Line PC,I'm afraid I haven't met someone by that name.
+            Line MC,It's okay, I don't expect some random person to know my brother.
+            Line MC,That would be ridiculous!
+            Line NR,The stranger chuckles at your words.
+            Line MC,What's your name by the way? I'm Paige.
+            Line PC,You can call me Pocket.
+            Line NR,Seems like everyone is keeping their name secret today.
+            Selection
+                Option A_A,Press them about their name
+                Option A_B,Don't push it
+                Label A_A
+                    Line MC,Oh come on, I know that's not your real name.
+                    Line PC,Why should I tell you?
+                    Line MC,Sorry!
+                    Line MC,I was just really curious is all.
+                    Line PC,Curiosity like that, at a time like this can lead you down alleyways you won't be able to crawl out of.
+                    Line PC,For your sake and my own I think it's best we part ways.
+                    Line NR,Before you're able to open your mouth to profusely apologize, Pocket walks away in a huff.
+                    Line NR,Not long after you lose sight of him, wondering if you'll cross paths again...
+                    Line NR,Nothing of note happens as you go back to reading your book.
+                    Line NR,The story is enticing and you wonder what's going to happen next when your stomach decides to growl loudly.
+                    Line NR,You look around to make sure no one else heard that and luckily it seems there isn't a soul lingering. 
+                    Line NR,It's probably time for you to get dinner.
+                    Redirect Pocket_Dinner
+                Label A_B
+                    Line MC,Pocket... You still have that familiar face but the name doesn't match.
+                    Line MC,Who knows, maybe I'll be able to put it together later.
+                    Line PC,Right...
+                    Line MC,So what brings you to the Baroness?
+                    Line PC,I know I don't look like the typical clientele, but I just need a local place to stay for a couple of days.
+                    Line MC,Oh, I didn't mean it like that!
+                    Line MC,Just kind of wondering in general.
+                    Line MC,In fact, I have similar reasons as to why I'm here!
+                    Line PC,Really? You?
+                    Line NR,Their choice of words strike you as odd.
+                    Line NR,If they're here for a similar reason you could say the same thing as well.
+                    Line PC,Sorry, I don't mean to pry if you're uncomfortable.
+                    Line MC,It's okay!
+                    Line MC,Really, honestly it's a little daunting to be doing this by myself.
+                    Line PC,I get the feeling.
+                    Line PC,I've been on my own for a bit now and I never thought it'd be like this.
+                    Line MC,I'm sure my parents are freaking out about me leaving for a while! 
+                    Line NR,You let out a nervous laugh.
+                    Line PC,Well at least they care...
+                    Line MC,Not about my brother, though.
+                    Line NR,The more you think about your parents the angrier you get.
+                    Line NR,The thought of them pretending like nothing ever happened enrages you.
+                    Line MC,It's like they don't even care that he's gone!
+                    Line MC,I'm the only one in our family who's actually looking for him!
+                    Line PC,I'm sorry to hear that...
+                    Line MC,It's fine, it's not your fault he left.
+                    Line PC,I'm sure you'll find him.
+                    Line PC,You seem like a really good sister.
+                    Line MC,Thanks, but I'm sure he wouldn't have the highest opinion of me since I was the favorite child.
+                    Line PC,Even so, he shouldn't put the blame on you.
+                    Line PC,That's on your parents, alone.
+                    Line MC,Thanks Pocket.
+                    Line PC,You know, I might be able to help you, Paige.
+                    Line MC,You don't actually mean that do you?
+                    Line PC,I might know a few people that may or may not have information.
+                    Line MC,You really don't have to do that!
+                    Line PC,I don't really have anything better to do and who knows what's going to happen in the next couple of days. 
+                    Line MC,I guess you're right, I can get all the help I can get afterall.
+                    Line NR,You are struck by Pocket's kindness.
+                    Line NR,They seem to be a good person, but you still keep a bit of your guard up.
+                    Line PC,Hey, do you want to grab dinner maybe?
+                    Line NR,Their proposition also strikes you by surprise.
+                    Line MC,Oh! Um, sure.
+                    Line MC,I don't really have anything better to do.
+                    Line PC,I know the cafe here is a bit quieter than the other restaurant.
+                    Line PC,I don't know about you but I prefer to stay out of larger crowds.
+                    Line MC,That sounds perfect!
+                    Redirect Pocket_Dinner
+        Label B
+            Line NR,You try to avoid grabbing more of their attention by digging your head back into the book you were reading.
+            Line NR,You hear footsteps begin to approach you, but at the last second they start to fade.
+            Line NR,You look up and see the figure briskly walking away and out of sight.
+            Line NR,Weird, you thought.
+            Line NR,You wonder if you'll see them again...
+            Line NR,Nothing of note happens as you go back to reading your book.
+            Line NR,The story is enticing and you wonder what's going to happen next when your stomach decides to growl loudly.
+            Line NR,You look around to make sure no one else heard that and luckily it seems there isn't a soul lingering in the area. 
+            Line NR,It's probably time for you to get dinner.
 
 Scene Baroness_Dinner
-    # TODO: Fill out
-    Line NR,TODO (Baroness_Dinner)
+    Selection
+        Option A,Formal
+        Option B,Casual
+        Label A
+            Line NR,You decide to treat yourself to a more elevated dining experience. 
+            Line NR,The restaurant inside the Baroness, much like its other attractions, is oddly large.
+            Line NR,The main dining area is somewhat dim, with wooden tables covered in cloths placed neatly around, assuring enough space for people and staff to maneuver around sitting guests.
+            Line NR,The clientele that reside within the restaurant are as you expected—they look rich.
+            Line NR,Women dressed elegantly with jewelry you did not want to know the price of and men wearing suits they could wear to their weddings.
+            Line NR,You feel a bit out of place as your eyes scan the room.
+            Line NR,There isn't a familiar face in sight either; though, there are a few figures that pique your curiosity.
+            Line NR,In front of you, waiting to be seated, is a woman, roughly around your age you'd wager.
+            Line NR,She's dressed in black and red and has a haughty aura around her.
+            Line NR,She looks familiar to you, like you've seen her in a magazine perhaps.
+            Line NR,The more you look on, the closer you are to piecing it together.
+            Line NR,'Right!' you think to yourself.
+            Line NR,Her name is Mina Ha, the would be widow if her fiance didn't die before the wedding.
+            Line NR,You remember reading about it in the local newspaper.
+            Line NR,Tragedy befalling the young heir of Fairfax Industries, the title read.
+            Line NR,Her name and a photo where she looked more mad than sad at her fiance's passing.
+            Line NR,Even now she is practically the opposite of a lover in mourning.
+            Line NR,You begin to speculate about what their relationship was actually like.
+            Line NR,You've heard that it was just an arrangement that was beneficial to both families.
+            Line NR,Something about her looked different though...
+            Line NR,You couldn't put your finger on it but something about her was different from how she was in that photo. 
+            Line NR,Your thoughts come to a grinding halt as the eyes of the elegant woman meet yours.
+            Line NR,She looks you over like you were a speck of dirt that landed on her dress. 
+            Line MN,They seem to be letting in anyone nowadays.
+            Line NR,The remark struck you hard.
+            Line NR,It felt like all eyes were on you now.
+            Line NR,Suddenly you were self-conscious about every little detail, your clothes, hair, glasses. 
+            Line MN,Maybe it isn't so bad though, the more people like you around only prove that there is a higher level to society.
+            Selection
+                Option A_A,Speak up
+                Option A_B,Stay silent
+                Label A_A
+                    Line NR,A rage wells up inside of you.
+                    Line NR,While you already didn't care much for Miss Ha's fashion design, her haughty attitude is enough to push you over the edge. 
+                    Line MC,At least I don't put others down because I'm secretly insecure!
+                    Line NR,While speaking out, your voice quivers a bit more than you would've liked.
+                    Line MN,Ha! You should practice in the mirror more and maybe seek professional help.
+                    Line MN,If your backtalk is as much a crime as that outfit, I wouldn't be showing my face in public.
+                    Line NR,You can start to hear whispers and murmurs around you.
+                    Line NR,The other guests begin to look away as your eyes scan around.
+                    Line NR,It's beginning to be too much.
+                    Line NR,Mina Ha calling you out in front of everyone is enough to squash anyone.
+                    Line NR,You decide that it would be best to retreat to your room.
+                    Line NR,A good book and room service might be the only thing that could salvage today...
+                    Redirect Book_Room
+                Label A_B
+                    Line NR,You grit your teeth and decide to stay silent.
+                    Line NR,Anything you say probably wouldn't reach through her thick skull anyway.
+                    Line NR,Her head is too high up in the clouds for anyone to reach her from Earth.
+	                Line NR,For a moment, she just stares at you, like she's expecting you to retort.
+                    Line NR,You stand your ground and keep silent. 
+                    Line NR,he then just scoffs and returns her attention to the staff that are too slow for her liking. 
+        Label B
+            Line NR,It would probably be a bit more calming to not worry about appearances while dining.
+            Line NR,You pass by the fancier restaurant as you make your way to the only cafe within the Baroness.
+            Line NR,It's surprisingly small once you step inside.
+            Line NR,There are only 5 tables with most of them unoccupied.
+            Line NR,Seems like the main attraction, at least for dinner, is the formal restaurant. 
+            Line NR,You wait at the front to be seated and gaze over at the guests that are here.
+            Line NR,The people seated near the front of the cafe seem to be the average guest staying at the Baroness.
+            Line NR,There isn't really anything of note about them. 
+            Line NR,Seated back in the corner of the cafe, a man with ostentatious hair sat.
+            Line NR,He's wearing a leather jacket with a white dress shirt underneath.
+            Line NR,Something that stands out to you as well is that it looks like he's wearing some sort of harness. 
+            Line NR,While giving him a once over, you realize that he is pretty attractive.
+            Line NR,He looks like your classic bad boy.
+            Line NR,Your mind wanders, thinking about what his deal is.
+            Line NR,Before you get caught, you decide to look away and wait to be seated.
+            Line NR,To your surprise, both good and bad, you are seated besides the mysterious man.
+            Line NR,You reach into your bag and pull out a book before you get lost staring again.
 
-Scene RoomYouEnter
-    # TODO: Fill out
-    Line NR,TODO (RoomYouEnter)
+Scene Pocket_Dinner
+    Line NR,You are accompanied by the oddly familiar stranger.
+    Line NR,You pass by the fancier restaurant featured in the Baroness.
+    Line NR,You notice Pocket seems to duck their head as they pass by the entrance.
+    Line NR,You look into the restaurant, hoping to see what they were hiding from.
+    Line NR,You don't see anything unusual as you pass by.
+    Line NR,It looks to be your average uptight restaurant that rich people go to.
+    Line NR,You also glance at the people in the restaurant and you notice another familiar figure...
+	Line NR,You see Mina Ha standing near the front, waiting to be seated.
+    Line NR,And that's when lighting strikes.
+    Line NR,You stare at the fashion designer then to Pocket in front of you.
+    Line NR,That's where you've seen them before.
+    Line NR,The, assumed to be, dead heir of Fairfax Industries.
+    Line NR,As the realization begins to set in, you stop dead in your tracks.
+    Line NR,The figure in front of you stops as well, turns around, and is confused as to why you stopped.
+	Line PC,Come on, let's keep moving.
+	Line MC,Right! Sorry...
+	Line NR,You force your feet off the ground and start walking again, far away from the previous restaurant.
+    Line NR,It would probably be better to ask Pocket about it when there's not a crowd of people around.
+	Line NR,Eventually, the two of you make your way to the only cafe within the Baroness.
+    Line NR,Lucky for you two, it seems to be fairly empty.
+    Line NR,Only two other tables are taken up by guests. 
+	Line PC,What was that about back there?
+	Line MC,What was what about?
+	Line PC,Why'd you stop in front of that restaurant?
+	Line MC,Oh, that.
+    Line MC,I just thought I saw someone I knew.
+    Line MC,Turns out it wasn't them, sorry about that.
+	Line NR,They seem to lower their tense shoulders at your response. 
+	Line PC,I see, sorry. 
+	Line NR,The two of you wait to be seated.
+    Line NR,Pocket asks the hostess to seat the two of you at the back of the cafe.
+    Line NR,You now understand as to why they are trying to stay out of the public eye, but why come back to New York City?
+    Line NR,If you were them, you'd get out of dodge, change your name, and probably move out of state at the very least.
+    Line NR,Also, much to your surprise, for being the heir of such a well established company, Pocket isn't the trust-fund kid type.
+    Line NR,They seem to have a good head on their shoulders.
+	Line PC,Again, sorry if I seem on edge.
+    Line PC,There's just a couple of things I'm trying to avoid right now...
+	Line MC,I totally understand (something that lets on she knows who pocket is)
+	Line PC,What's that supposed to mean?
+    Selection
+        Option A,Shift convo
+        Option B,Explain yourself
+        Label A
+            Line MC,Well, you said it yourself.
+            Line MC,I mean regardless of who you are, it looks like you're trying to keep a low profile and all that.
+            Line PC,Right, right...
+            Line NR,You look around the cafe looking for anything to shift the conversation towards.
+            Line NR,While Pocket seems to be satisfied with your answer, you get the feeling they may be on to you.
+            Line MC,Hey, Pocket.
+            Line PC,What?
+            Line MC,You see that guy over there?
+            Line NR,You direct Pocket's attention to one of the other patrons within the cafe.
+            Redirect Todo_Scene
+        Label B
+            Line MC,I know you were trying to hide your identity and all that, but I couldn't help but notice how you were acting when we walked in front of that restaurant.
+            Line PC,What did you see
+            Line MC,I don't want to say it out loud for your sake, of course, but I saw her.
+            Line NR,Pocket's eyes widen as the word ‘her' leaves your mouth. 
+            Line PC,It seems you're smart enough to put two and two together.
+            Line PC,I appreciate your discretion and I'd appreciate it even more if we didn't talk about it here.
+            Line MC,I know it isn't my place to talk about it, but I must admit I am really curious about what supposedly happened to you.
+            Line PC,It's a long story.
+            Line PC,I'll tell you that much now.
+            Line MC,Oh, I bet.
+            Line PC,Well, now that you know who I am, I think it's only fair that you tell me a bit more about yourself.
+            Line MC,Me?
+            Line MC,Well, where do I start? 
+            Line PC,I already know about your brother.
+            Line PC,Maybe you can tell me about those books you carry about with you.
+            Line NR,You look down at the bag you brought with you.
+            Line NR,No matter how hard you tried, there were too many books packed in to actually close it. 
+            Line PC,They look quite rare and I've seen rare books.
+            Line MC,Do you like to read?
+            Line PC,I used to.
+            Line PC,Don't exactly have much time to do so nowadays.
+            Line MC,Well, that's a shame.
+            Line PC,Hopefully after this is all over I'll have time to actually relax.
+            Line PC,You got any recommendations?
+            Line MC,I don't think there are enough hours in the day for me to go through everything I'd recommend.
+            Line PC,Well then, let's narrow it down.
+            Line PC,I'm always a sucker for a good mystery novel.
+            Line MC,Mystery... Have you read ‘Strangers on a Train'?
+            Line PC,I have not.
+            Line MC,That's where I would start then.
+            Line MC,The author, Patricia Highsmith, is a seasoned writer.
+            Line MC,Her works are quite amazing and if you like this book I recommend anything else she's written.
+            Line PC,'Strangers on a Train'.
+            Line PC,I'll have to keep that in mind the next time I'm in a bookstore.
+            Line MC,Like you said before, once all this stuff is over, I'd love to show you around the best bookstores New York has to offer.
+            Line PC,I might just take you up on that offer.
+            Redirect Book_Room_Pocket
+
+
 
 Scene Todo_Scene
     # TODO: Fill out
     Line NR,TODO (Todo_Scene)
+
+Scene Book_Room
+    # TODO: Fill out
+    Line NR,TODO (Book_Room)
+
+Scene Book_Room_Pocket
+    # TODO: Fill out
+    Line NR,TODO (Book_Room_Pocket)
 
 SelectScene Intro_Baroness
