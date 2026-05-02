@@ -22,7 +22,7 @@ public class GameState {
     
     public static final String SCRIPT_FILE = "/TestScript.txt";
 
-    public final List<GameScene> scenes = new ArrayList<>();
+    public final Map<String, GameScene> scenes = new HashMap<>();
     public final Map<String, GameCharacter> chars = new HashMap<>();
     public GameScene activeScene = null;
     private int lineIdx = 0;
@@ -33,10 +33,18 @@ public class GameState {
      * @throws IOException If the file contents could not be read or parsed.
      */
     public GameState(String scriptFile) throws IOException {
+        long startTime = System.currentTimeMillis();
         InputStream scriptStream = GameFrame.class.getResourceAsStream(scriptFile);
         BufferedReader scriptStreamReader = new BufferedReader(new InputStreamReader(scriptStream));
         String line;
+
+        // Some lines will be used to setup the next line(ex: Char -> SetCharName). This requires some state vars
+        GameCharacter currentChar = null;
+        GameScene currentScene = null;
+
+        int lineNum = 0;
         while ((line = scriptStreamReader.readLine()) != null) {
+            lineNum++;
             line = line.strip();
             if (line.isEmpty() || line.startsWith("#")) {
                 continue;
@@ -48,61 +56,77 @@ public class GameState {
                 } else {
                     command = line.strip();
                 }
-                if (command.equalsIgnoreCase("AddChar")) {
+                if (command.equalsIgnoreCase("Char")) {
                     List<String> args = parseArguments(1, line);
-                    GameCharacter character = new GameCharacter();
-                    chars.put(args.get(0), character);
+                    if (chars.containsKey(args.get(0))) {
+                        currentChar = chars.get(args.get(0));
+                    } else {
+                        currentChar = new GameCharacter();
+                        chars.put(args.get(0), currentChar);
+                    }
                 } else if (command.equalsIgnoreCase("SetCharName")) {
-                    List<String> args = parseArguments(2, line);
-                    chars.get(args.get(0)).name = args.get(1);
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
+                    List<String> args = parseArguments(1, line);
+                    currentChar.name = args.get(0);
                 } else if (command.equalsIgnoreCase("SetCharColor")) {
-                    List<String> args = parseArguments(4, line);
-                    Color color = new Color(Integer.parseInt(args.get(1)),
-                                            Integer.parseInt(args.get(2)),
-                                            Integer.parseInt(args.get(3)));
-                    chars.get(args.get(0)).color = color;
-                } else if (command.equalsIgnoreCase("SetCharRight")) {
-                    List<String> args = parseArguments(1, line);
-                    chars.get(args.get(0)).isRightSide = true;
-                } else if (command.equalsIgnoreCase("SetCharTextItalics")) {
-                    List<String> args = parseArguments(1, line);
-                    chars.get(args.get(0)).isItalics = true;
-                } else if (command.equalsIgnoreCase("StartScene")) {
-                    scenes.add(new GameScene());
-                } else if (command.equalsIgnoreCase("SetBackdrop")) {
-                    List<String> args = parseArguments(2, line);
-                    int sceneId = Integer.parseInt(args.get(0));
-                    BufferedImage img = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(1)));
-                    scenes.get(sceneId).backdrop = img;
-                } else if (command.equalsIgnoreCase("AddLine")) {
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
                     List<String> args = parseArguments(3, line);
-                    int sceneId = Integer.parseInt(args.get(0));
+                    Color color = new Color(Integer.parseInt(args.get(0)),
+                                            Integer.parseInt(args.get(1)),
+                                            Integer.parseInt(args.get(2)));
+                    currentChar.color = color;
+                } else if (command.equalsIgnoreCase("SetCharRight")) {
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
+                    currentChar.isRightSide = true;
+                } else if (command.equalsIgnoreCase("SetCharTextItalics")) {
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
+                    currentChar.isItalics = true;
+                } else if (command.equalsIgnoreCase("Scene")) {
+                    List<String> args = parseArguments(1, line);
+                    if (scenes.containsKey(args.get(0))) {
+                        currentScene = scenes.get(args.get(0));    
+                    } else {
+                        currentScene = new GameScene();
+                        scenes.put(args.get(0), currentScene);
+                    }
+                } else if (command.equalsIgnoreCase("SetBackdrop")) {
+                    if (currentScene == null) throw new GameScriptException(lineNum, "No scene in scope");
+                    List<String> args = parseArguments(1, line);
+                    BufferedImage img = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(0)));
+                    currentScene.backdrop = img;
+                } else if (command.equalsIgnoreCase("AddLine")) {
+                    if (currentScene == null) throw new GameScriptException(lineNum, "No scene in scope");
+                    List<String> args = parseArguments(2, line);
                     SceneLine sceneLine = new SceneLine();
-                    sceneLine.charId = args.get(1);
-                    sceneLine.line = args.get(2);
+                    sceneLine.charId = args.get(0);
+                    sceneLine.line = args.get(1);
                     sceneLine.expression = "Default";
-                    scenes.get(sceneId).lines.add(sceneLine);
+                    currentScene.lines.add(sceneLine);
                 } else if (command.equalsIgnoreCase("SelectScene")) {
                     List<String> args = parseArguments(1, line);
-                    int sceneId = Integer.parseInt(args.get(0));
-                    activeScene = scenes.get(sceneId);
+                    String newSceneId = args.get(0);
+                    if (!scenes.containsKey(newSceneId)) throw new GameScriptException(lineNum, "Scene does not exist at this point");
+                    activeScene = scenes.get(newSceneId);
                 } else if (command.equalsIgnoreCase("AddExpression")) {
-                    List<String> args = parseArguments(3, line);
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
+                    List<String> args = parseArguments(2, line);
                     CharExpr expr = new CharExpr();
-                    expr.name = args.get(1);
-                    expr.sprite = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(2)));
-                    chars.get(args.get(0)).expressions.put(expr.name, expr);
+                    expr.name = args.get(0);
+                    expr.sprite = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(1)));
+                    currentChar.expressions.put(expr.name, expr);
                 } else {
-                    throw new Exception(String.format("Failed to parse script line: Unrecognized command(%s)", command));
+                    throw new GameScriptException(lineNum, "Failed to parse command");
                 }
             } catch (Exception ex) {
-                System.err.printf("Failed to parse script line: %s\n", line);
+                System.err.printf("Failed to parse script line %d: %s\n", lineNum, line);
                 ex.printStackTrace();
                 System.exit(1);
             }
         }
 
         updateStateCache();
+        long timeToLoad = System.currentTimeMillis() - startTime;
+        System.out.printf("Time to load script: %.2f sec\n", (float)timeToLoad / 1000);
     }
 
     public List<String> parseArguments(int numExpected, String line) {
@@ -116,6 +140,10 @@ public class GameState {
                 args.add(line.substring(0, nextSpace).strip());
                 line = line.substring(nextSpace + 1);
             }
+        }
+        if (numExpected == 1 && args.get(0).equals("_")) {
+            args.clear();
+            args.add("");
         }
         return args;
     }
