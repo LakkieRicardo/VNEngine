@@ -2,6 +2,7 @@ package lakkie;
 
 import javax.swing.JFrame;
 
+import lakkie.state.GameScriptException;
 import lakkie.state.GameState;
 
 import java.awt.Dimension;
@@ -99,7 +100,14 @@ public class GameFrame extends JFrame implements WindowListener, MouseListener, 
         if (gameRenderPanel.showTranscript()) {
             return;
         }
-        state.nextLine();
+        try {
+            if (!state.isSelectionActive()) {
+                state.nextLine();
+            }
+        } catch (GameScriptException e1) {
+            e1.printStackTrace();
+            System.out.println("Failed to go to next line");
+        }
     }
 
     @Override
@@ -112,6 +120,17 @@ public class GameFrame extends JFrame implements WindowListener, MouseListener, 
             state.lastLine();
         } else if (e.getKeyCode() == KeyEvent.VK_F2 || (e.getKeyCode() == KeyEvent.VK_ESCAPE && gameRenderPanel.showTranscript())) {
             gameRenderPanel.setShowTranscript(!gameRenderPanel.showTranscript());
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN && !gameRenderPanel.showTranscript()) {
+            gameRenderPanel.moveSelectionDown();
+        } else if (e.getKeyCode() == KeyEvent.VK_UP && !gameRenderPanel.showTranscript()) {
+            gameRenderPanel.moveSelectionUp();
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER && !gameRenderPanel.showTranscript()) {
+            try {
+                gameRenderPanel.chooseSelection();
+            } catch (GameScriptException e1) {
+                e1.printStackTrace();
+                System.out.println("Failed to find target label.");
+            }
         }
     }
 

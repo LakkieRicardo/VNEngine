@@ -18,29 +18,93 @@ Char NR
     AddExpression Default,/cat.png
 
 Scene Intro_Baroness
-    SetBackdrop /baroness.png
-    AddLine NR,Perhaps a night or two away from your parents isn't such a bad idea. Searching for your brother won't yield any results staying nestled with your parents.
-    AddLine NR,You walk through the streets on your way to the Baroness, a strange yet welcoming hotel. While you have not stayed at the Baroness yourself, you've heard many rumors about it having abnormal events.
-    AddLine NR,The stories you have heard remind you of your favorite horror novels. While reading about paranormal activity is thrilling on paper, it might not be so attractive in real life…
-    AddLine NR,Walking into the Baroness, you are surprised at the sheer volume of the room before you. The lobby is large and open, with many people chatting, lounging, and just plainly walking around. The room is filled with the sound of soft jazz and chatter. No immediate conversations strike you as interesting.
-    AddLine NR,As you get your bearings and walk towards the front desk, a tall man with ginger hair approaches you. His attire suggests that he works here and his piercing blue eyes gaze at you.
-    AddLine DM,Welcome to the Baroness.
-    AddLine NR,His voice is calm and collected. Everything about him seems too in place.
-    AddLine DM,Do you have a reservation or are you walking in?
-    AddLine MC,Oh! I'm just walking in. I was wondering if I could get a room for the next two nights.
-    AddLine DM,Oh, for the next two nights? Normally, I would recommend all guests who wish to enjoy the hospitality of the Baroness to make reservations in advance, I understand the need for many walks of life to gather here at this time.
-    AddLine MC,It's really no trouble if you have no space for me. I'm sure I can stay somewhere else.
-    AddLine DM,Oh no no. I did not mean to come across as untoward to your request. There is room for you here, miss. Shall I take your belongings to your room?
-    AddLine MC,Don't I have to check in or something first?
-    AddLine DM,No need, I have already taken care of it.
-    AddLine MC,But we just started talking.
-    AddLine MC,Like I said, it's already taken care of.
-    AddLine NR,His demeanor is off and you swear his eyes glow momentarily. Such a strange man…
-    AddLine DM,Might I have your name, miss?
-    AddLine MC,Oh, right! I'm Paige. Nice to meet you… um?
-    AddLine DM,You may call me the Doorman.
-    AddLine MC,Well, that's not your actual name is it?
-    AddLine DM,No, but for my purposes here, you may refer to me as the doorman.
-    AddLine NR,His response strikes you as odd. Normally you'd expect staff to wear name tags, yet the man in front of you has no such thing.
+    Backdrop /baroness.png
+    Line NR,Perhaps a night or two away from your parents isn't such a bad idea. Searching for your brother won't yield any results staying nestled with your parents.
+    Line NR,You walk through the streets on your way to the Baroness, a strange yet welcoming hotel. While you have not stayed at the Baroness yourself, you've heard many rumors about it having abnormal events.
+    Line NR,The stories you have heard remind you of your favorite horror novels. While reading about paranormal activity is thrilling on paper, it might not be so attractive in real life…
+    Line NR,Walking into the Baroness, you are surprised at the sheer volume of the room before you. The lobby is large and open, with many people chatting, lounging, and just plainly walking around. The room is filled with the sound of soft jazz and chatter. No immediate conversations strike you as interesting.
+    Line NR,As you get your bearings and walk towards the front desk, a tall man with ginger hair approaches you. His attire suggests that he works here and his piercing blue eyes gaze at you.
+    Line DM,Welcome to the Baroness.
+    Line NR,His voice is calm and collected. Everything about him seems too in place.
+    Line DM,Do you have a reservation or are you walking in?
+    Line MC,Oh! I'm just walking in. I was wondering if I could get a room for the next two nights.
+    Line DM,Oh, for the next two nights? Normally, I would recommend all guests who wish to enjoy the hospitality of the Baroness to make reservations in advance, I understand the need for many walks of life to gather here at this time.
+    Line MC,It's really no trouble if you have no space for me. I'm sure I can stay somewhere else.
+    Line DM,Oh no no. I did not mean to come across as untoward to your request. There is room for you here, miss. Shall I take your belongings to your room?
+    Line MC,Don't I have to check in or something first?
+    Line DM,No need, I have already taken care of it.
+    Line MC,But we just started talking.
+    Line MC,Like I said, it's already taken care of.
+    Line NR,His demeanor is off and you swear his eyes glow momentarily. Such a strange man…
+    Line DM,Might I have your name, miss?
+    Line MC,Oh, right! I'm Paige. Nice to meet you… um?
+    Line DM,You may call me the Doorman.
+    Line MC,Well, that's not your actual name is it?
+    Line DM,No, but for my purposes here, you may refer to me as the doorman.
+    Line NR,His response strikes you as odd. Normally you'd expect staff to wear name tags, yet the man in front of you has no such thing.
+    Selection
+        Option A,Ask what his real name is.
+        Option B,Ask him to show you to your room.
+        Option C,Give him your belongings then explore the hotel.
+    Label A
+        Line MC,But what’s your actual name?
+        Line DM,It is of no concern for my time here. 
+        Line MC,Hmm... Can I call you Brian?
+        Line DM,No.
+        Line NR,While an awkward moment of silence would’ve rested itself between the two of you, the loud ambiance of the Baroness shoos it away.
+        Line DM,Come to think of it, I believe I have heard of you.
+        Line MC,Me?
+        Line DM,Why yes. You are a bibliomancer, no?
+        Line MC,How’d you know?
+        Line DM,You read to children don’t you? I’ve heard through the grapevine that you are wonderful with children. Igniting their passion for reading using your amazing way of telling stories and bringing them to life.
+        Line MC,I-It’s not that impressive. But I am glad to hear people enjoy that.
+        Line DM,You should do a reading here at the Baroness. I’m sure our guests would love it!
+        Line MC,Maybe sometime soon, we’ll see.
+        Line DM,We shall see, indeed. Now, may I take your belongings?
+        Redirect Todo_Scene
+    Label B
+        Line MC,Um, okay Doorman, can you show me to my room?
+        Line DM,Of course! Follow me please.
+        Line NR,The two of you traverse the surprisingly complicated halls of the Baroness. You make it up to your room, noting the number 316.
+        Line DM,Here is your key, miss.
+        Line NR,He extends his hand outward towards you. The key presented almost looks mint, the leather tag attached has the room number stamped into it. 
+        Line NR,You open the door to your room and enter. The doorman behind you enters with the bag that you brought. 
+        Line DM,Is that all you require?
+        Line MC,Yes, thank you! 
+        Line NR,You watch as the doorman leaves the room. Once you hear his footsteps travel down the hall, you decide to make yourself comfortable. The room assigned to you seemed normal. Nothing was out of place. It was actually very neat and clean.
+        Line NR,Once unpacked, you realize how hungry you actually are. It’s probably time you decide where you’re going to have dinner
+        Redirect Baroness_Dinner
+    Label C
+        Line MC,Actually, I’ll take you up on your offer regarding my belongings. I’m just gonna see what’s around the Baroness.
+        Line DM,Of course! There are many activities to partake in at the Baroness. May I offer some suggestions?
+        Selection
+            Option C_A,Yes
+            Option C_B,No
+            Label C_A
+                Line MC,Sure, what do you recommend?
+                Line DM,For someone like you...
+                Line NR,He seems to ponder for a moment before continuing. 
+                Line DM,Perhaps you should enjoy the atmosphere of our indoor fountain while reading.
+                Line MC,That actually sounds like a great idea, thanks.
+                Line DM,Of course, and if you need anything do not be afraid to request me. Enjoy your stay at the Baroness.
+                Line NR,You watch as the Doorman walks off with your bag. The idea he suggested is agreeable with you, so you decide to walk towards the indoor fountain.
+                Redirect RoomYouEnter
+            Label C_B
+                Line MC,I think I’m okay with finding my own way.
+                Line DM,Very well then, I shall bring your belongings to your room and leave you be. Do not be afraid to request me if you need anything. Enjoy your stay at the Baroness.
+                Redirect RoomYouEnter
+
+
+Scene Baroness_Dinner
+    # TODO: Fill out
+    Line NR,TODO (Baroness_Dinner)
+
+Scene RoomYouEnter
+    # TODO: Fill out
+    Line NR,TODO (RoomYouEnter)
+
+Scene Todo_Scene
+    # TODO: Fill out
+    Line NR,TODO (Todo_Scene)
 
 SelectScene Intro_Baroness
