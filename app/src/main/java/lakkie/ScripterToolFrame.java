@@ -62,7 +62,7 @@ public class ScripterToolFrame extends JFrame {
     private void setupTitleBar() {
         JMenuBar bar = new JMenuBar();
         setJMenuBar(bar);
-        JMenu menu = new JMenu("Scripts...");
+        JMenu menu = new JMenu("Scripts");
         JMenuItem itemLoad = new JMenuItem("Validate script file...");
         itemLoad.addActionListener(action -> validateScriptFile());
         menu.add(itemLoad);
