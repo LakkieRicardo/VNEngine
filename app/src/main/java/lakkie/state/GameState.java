@@ -37,9 +37,8 @@ public class GameState {
      * @param scriptFile The name of the script file to load.
      * @throws IOException If the file contents could not be read or parsed.
      */
-    public GameState(String scriptFile) throws IOException {
+    public GameState(InputStream scriptStream) throws IOException {
         long startTime = System.currentTimeMillis();
-        InputStream scriptStream = GameFrame.class.getResourceAsStream(scriptFile);
         BufferedReader scriptStreamReader = new BufferedReader(new InputStreamReader(scriptStream));
         String line;
 

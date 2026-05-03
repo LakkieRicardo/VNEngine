@@ -9,8 +9,6 @@ Char DM
     SetCharColor 108,40,51
     SetCharRight
     AddExpression Default,/doorman.png
-    AddExpression Flustered,/doorman_flustered.png
-    AddExpression Angry,/doorman_angry.png
 Char NR
     SetCharName _
     SetCharColor 0,255,0
