@@ -189,7 +189,13 @@ public class GameRenderComponent extends JPanel {
         g2d.fillRect(0, getHeight() - 48 * 6, getWidth(), 48 * 6);
         g2d.setColor(state.lineColor());
         FontMetrics metrics = g2d.getFontMetrics();
-        String[] words = wordSplit(state.line());
+        String animatedLine = state.line();
+        if (state.showTextAnim()) {
+            int charsToShow = (int)((System.currentTimeMillis() - state.textAnimStart()) / state.textDelayTime());
+            charsToShow = Math.min(charsToShow, animatedLine.length());
+            animatedLine = animatedLine.substring(0, charsToShow);
+        }
+        String[] words = wordSplit(animatedLine);
         StringBuilder nextLine = new StringBuilder();
         int numLines = 0;
         for (CharRenderable rend : state.charRenderables()) {

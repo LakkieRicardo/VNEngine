@@ -32,6 +32,7 @@ public class GameState {
     public final Map<String, GameCharacter> chars = new HashMap<>();
     public GameScene activeScene = null;
     private int lineIdx = 0;
+    private final int textDelayTime = 30;
 
     /**
      * Parses the given script file and loads it into the game state.
@@ -160,7 +161,6 @@ public class GameState {
             }
         }
 
-        // TODO: This implies the first content in the script needs to be a Line which might not be true
         try {
             lineIdx = -1;
             findNextRenderableContent();
@@ -200,6 +200,8 @@ public class GameState {
 
     private boolean isSelectionActive = false;
     private Selection activeSelection;
+    private boolean showTextAnim = false;
+    private long textAnimStart = 0;
     // private Transcript transcript;
 
     /**
@@ -245,6 +247,9 @@ public class GameState {
                 isSelectionActive = true;
                 activeSelection = selection;
             }
+
+            showTextAnim = true;
+            textAnimStart = System.currentTimeMillis();
             // List<TranscriptLine> lines = new ArrayList<>();
             // transcript = new Transcript(lines);
             // for (int idx = 0; idx <= lineIdx; idx++) {
@@ -300,6 +305,22 @@ public class GameState {
         }
     }
 
+    public boolean showTextAnim() {
+        synchronized (stateCacheMutex) {
+            return showTextAnim;
+        }
+    }
+
+    public long textAnimStart() {
+        synchronized (stateCacheMutex) {
+            return textAnimStart;
+        }
+    }
+
+    public int textDelayTime() {
+        return textDelayTime;
+    }
+
     public Selection selection() {
         return activeSelection;
     }
@@ -335,6 +356,11 @@ public class GameState {
 
     public void nextLine() throws GameScriptException {
         // TODO: If the first line in a scene is a selection, the last line might be wrong
+        long textLenToShow = (System.currentTimeMillis() - textAnimStart) / textDelayTime;
+    if (showTextAnim && textLenToShow < currentLine.length()) {
+            showTextAnim = false;
+            return;
+        }
         int oldIdx = lineIdx;
         GameScene oldScene = activeScene;
         synchronized (stateCacheMutex) {
