@@ -1,6 +1,11 @@
 package lakkie.state;
 
 import lakkie.GameFrame;
+import lakkie.state.SceneContent.Label;
+import lakkie.state.SceneContent.Line;
+import lakkie.state.SceneContent.Redirect;
+import lakkie.state.SceneContent.Selection;
+import lakkie.state.SceneContent.SelectionOption;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -22,7 +27,7 @@ public class GameState {
     
     public static final String SCRIPT_FILE = "/TestScript.txt";
 
-    public final List<GameScene> scenes = new ArrayList<>();
+    public final Map<String, GameScene> scenes = new HashMap<>();
     public final Map<String, GameCharacter> chars = new HashMap<>();
     public GameScene activeScene = null;
     private int lineIdx = 0;
@@ -32,11 +37,19 @@ public class GameState {
      * @param scriptFile The name of the script file to load.
      * @throws IOException If the file contents could not be read or parsed.
      */
-    public GameState(String scriptFile) throws IOException {
-        InputStream scriptStream = GameFrame.class.getResourceAsStream(scriptFile);
+    public GameState(InputStream scriptStream) throws IOException {
+        long startTime = System.currentTimeMillis();
         BufferedReader scriptStreamReader = new BufferedReader(new InputStreamReader(scriptStream));
         String line;
+
+        // Some lines will be used to setup the next line(ex: Char -> SetCharName). This requires some state vars
+        GameCharacter currentChar = null;
+        GameScene currentScene = null;
+        SceneContent.Selection currentSelection = null;
+
+        int lineNum = 0;
         while ((line = scriptStreamReader.readLine()) != null) {
+            lineNum++;
             line = line.strip();
             if (line.isEmpty() || line.startsWith("#")) {
                 continue;
@@ -48,61 +61,102 @@ public class GameState {
                 } else {
                     command = line.strip();
                 }
-                if (command.equalsIgnoreCase("AddChar")) {
+                if (command.equalsIgnoreCase("Char")) {
                     List<String> args = parseArguments(1, line);
-                    GameCharacter character = new GameCharacter();
-                    chars.put(args.get(0), character);
+                    if (chars.containsKey(args.get(0))) {
+                        currentChar = chars.get(args.get(0));
+                    } else {
+                        currentChar = new GameCharacter();
+                        chars.put(args.get(0), currentChar);
+                    }
                 } else if (command.equalsIgnoreCase("SetCharName")) {
-                    List<String> args = parseArguments(2, line);
-                    chars.get(args.get(0)).name = args.get(1);
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
+                    List<String> args = parseArguments(1, line);
+                    currentChar.name = args.get(0);
                 } else if (command.equalsIgnoreCase("SetCharColor")) {
-                    List<String> args = parseArguments(4, line);
-                    Color color = new Color(Integer.parseInt(args.get(1)),
-                                            Integer.parseInt(args.get(2)),
-                                            Integer.parseInt(args.get(3)));
-                    chars.get(args.get(0)).color = color;
-                } else if (command.equalsIgnoreCase("SetCharRight")) {
-                    List<String> args = parseArguments(1, line);
-                    chars.get(args.get(0)).isRightSide = true;
-                } else if (command.equalsIgnoreCase("SetCharTextItalics")) {
-                    List<String> args = parseArguments(1, line);
-                    chars.get(args.get(0)).isItalics = true;
-                } else if (command.equalsIgnoreCase("StartScene")) {
-                    scenes.add(new GameScene());
-                } else if (command.equalsIgnoreCase("SetBackdrop")) {
-                    List<String> args = parseArguments(2, line);
-                    int sceneId = Integer.parseInt(args.get(0));
-                    BufferedImage img = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(1)));
-                    scenes.get(sceneId).backdrop = img;
-                } else if (command.equalsIgnoreCase("AddLine")) {
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
                     List<String> args = parseArguments(3, line);
-                    int sceneId = Integer.parseInt(args.get(0));
-                    SceneLine sceneLine = new SceneLine();
-                    sceneLine.charId = args.get(1);
-                    sceneLine.line = args.get(2);
+                    Color color = new Color(Integer.parseInt(args.get(0)),
+                                            Integer.parseInt(args.get(1)),
+                                            Integer.parseInt(args.get(2)));
+                    currentChar.color = color;
+                } else if (command.equalsIgnoreCase("SetCharRight")) {
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
+                    currentChar.isRightSide = true;
+                } else if (command.equalsIgnoreCase("SetCharTextItalics")) {
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
+                    currentChar.isItalics = true;
+                } else if (command.equalsIgnoreCase("Scene")) {
+                    List<String> args = parseArguments(1, line);
+                    if (scenes.containsKey(args.get(0))) {
+                        currentScene = scenes.get(args.get(0));    
+                    } else {
+                        currentScene = new GameScene();
+                        scenes.put(args.get(0), currentScene);
+                    }
+                } else if (command.equalsIgnoreCase("Backdrop")) {
+                    if (currentScene == null) throw new GameScriptException(lineNum, "No scene in scope");
+                    List<String> args = parseArguments(1, line);
+                    BufferedImage img = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(0)));
+                    currentScene.backdrop = img;
+                } else if (command.equalsIgnoreCase("Line")) {
+                    if (currentScene == null) throw new GameScriptException(lineNum, "No scene in scope");
+                    List<String> args = parseArguments(2, line);
+                    Line sceneLine = new Line(lineNum);
+                    sceneLine.charId = args.get(0);
+                    sceneLine.line = args.get(1);
                     sceneLine.expression = "Default";
-                    scenes.get(sceneId).lines.add(sceneLine);
+                    currentScene.content.add(sceneLine);
+                } else if (command.equalsIgnoreCase("Label")) {
+                    if (currentScene == null) throw new GameScriptException(lineNum, "No scene in scope");
+                    List<String> args = parseArguments(1, line);
+                    Label label = new Label(lineNum);
+                    label.value = args.get(0);
+                    currentScene.content.add(label);
+                } else if (command.equalsIgnoreCase("Selection")) {
+                    if (currentScene == null) throw new GameScriptException(lineNum, "No scene in scope");
+                    currentSelection = new SceneContent.Selection(lineNum);
+                    currentScene.content.add(currentSelection);
+                } else if (command.equalsIgnoreCase("Option")) {
+                    if (currentScene == null) throw new GameScriptException(lineNum, "No scene in scope");
+                    if (currentSelection == null) throw new GameScriptException(lineNum, "No selection in scope");
+                    List<String> args = parseArguments(2, line);
+                    SelectionOption option = new SelectionOption();
+                    option.label = args.get(0);
+                    option.display = args.get(1);
+                    currentSelection.options.add(option);
+                } else if (command.equalsIgnoreCase("Redirect")) {
+                    if (currentScene == null) throw new GameScriptException(lineNum, "No scene in scope");
+                    List<String> args = parseArguments(1, line);
+                    Redirect redirect = new Redirect(lineNum);
+                    redirect.targetSceneId = args.get(0);
+                    currentScene.content.add(redirect);
                 } else if (command.equalsIgnoreCase("SelectScene")) {
                     List<String> args = parseArguments(1, line);
-                    int sceneId = Integer.parseInt(args.get(0));
-                    activeScene = scenes.get(sceneId);
+                    String newSceneId = args.get(0);
+                    if (!scenes.containsKey(newSceneId)) throw new GameScriptException(lineNum, "Scene does not exist at this point");
+                    activeScene = scenes.get(newSceneId);
                 } else if (command.equalsIgnoreCase("AddExpression")) {
-                    List<String> args = parseArguments(3, line);
+                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
+                    List<String> args = parseArguments(2, line);
                     CharExpr expr = new CharExpr();
-                    expr.name = args.get(1);
-                    expr.sprite = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(2)));
-                    chars.get(args.get(0)).expressions.put(expr.name, expr);
+                    expr.name = args.get(0);
+                    expr.sprite = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(1)));
+                    currentChar.expressions.put(expr.name, expr);
                 } else {
-                    throw new Exception(String.format("Failed to parse script line: Unrecognized command(%s)", command));
+                    throw new GameScriptException(lineNum, "Failed to parse command");
                 }
             } catch (Exception ex) {
-                System.err.printf("Failed to parse script line: %s\n", line);
+                System.err.printf("Failed to parse script line %d: %s\n", lineNum, line);
                 ex.printStackTrace();
                 System.exit(1);
             }
         }
 
-        updateStateCache();
+        // TODO: This implies the first content in the script needs to be a Line which might not be true
+        updateStateCache(null, -1);
+        long timeToLoad = System.currentTimeMillis() - startTime;
+        System.out.printf("Time to load script: %.2f sec\n", (float)timeToLoad / 1000);
     }
 
     public List<String> parseArguments(int numExpected, String line) {
@@ -117,6 +171,10 @@ public class GameState {
                 line = line.substring(nextSpace + 1);
             }
         }
+        if (numExpected == 1 && args.get(0).equals("_")) {
+            args.clear();
+            args.add("");
+        }
         return args;
     }
 
@@ -125,11 +183,40 @@ public class GameState {
     private String currentLine = "", currentCharName = "";
     private boolean currentLineItalics = false, currentCharIsRight = false;
     private BufferedImage currentCharImg = null, currentBackdrop = null;
-    private Transcript transcript;
 
-    private void updateStateCache() {
+    private boolean isSelectionActive = false;
+    private Selection activeSelection;
+    // private Transcript transcript;
+
+    private void updateStateCache(GameScene oldScene, int oldIdx) {
+        if (oldIdx != -1 && oldScene != null) {
+            assert oldScene.content.get(oldIdx) instanceof Line;
+        }
+        // By the time we call this function the lineIdx should only point to a Line or Selection
+        // Also, the argument for this function should always point to a Line
         synchronized (stateCacheMutex) {
-            SceneLine line = activeScene.lines.get(lineIdx);
+            SceneContent content = activeScene.content.get(lineIdx);
+            Line line;
+            if (content instanceof Selection selection) {
+                if (oldIdx == -1 || oldScene == null) {
+                    // Use default properties if there is no previous line to go off of
+                    isSelectionActive = true;
+                    activeSelection = selection;
+                    currentCharColor = Color.white;
+                    currentLine = "";
+                    currentLineItalics = false;
+                    currentCharIsRight = false;
+                    currentCharImg = null;
+                    currentBackdrop = activeScene.backdrop;
+                    currentCharName = "";
+                    return;
+                }
+                line = (Line)oldScene.content.get(oldIdx);
+            } else {
+                line = (Line)activeScene.content.get(lineIdx);
+                isSelectionActive = false;
+                activeSelection = null;
+            }
             GameCharacter character = chars.get(line.charId);
             currentCharColor = character.color;
             currentLine = line.line;
@@ -138,23 +225,28 @@ public class GameState {
             currentCharImg = character.expressions.get(line.expression).sprite;
             currentBackdrop = activeScene.backdrop;
             currentCharName = character.name;
-            List<TranscriptLine> lines = new ArrayList<>();
-            transcript = new Transcript(lines);
-            for (int idx = 0; idx <= lineIdx; idx++) {
-                SceneLine sceneLine = activeScene.lines.get(idx);
-                lines.add(new TranscriptLine(sceneLine.charId,
-                    chars.get(sceneLine.charId).color,
-                    sceneLine.line,
-                    chars.get(sceneLine.charId).isItalics));
+            if (content instanceof Selection selection) {
+                isSelectionActive = true;
+                activeSelection = selection;
             }
+            // List<TranscriptLine> lines = new ArrayList<>();
+            // transcript = new Transcript(lines);
+            // for (int idx = 0; idx <= lineIdx; idx++) {
+            //     SceneContent sceneLine = activeScene.content.get(idx);
+            //     lines.add(new TranscriptLine(sceneLine.charId,
+            //         chars.get(sceneLine.charId).color,
+            //         sceneLine.line,
+            //         chars.get(sceneLine.charId).isItalics));
+            // }
         }
     }
 
-    public Transcript getTranscript() {
-        synchronized (stateCacheMutex) {
-            return transcript;
-        }
-    }
+    // TODO: Implement transcript
+    // public Transcript getTranscript() {
+    //     synchronized (stateCacheMutex) {
+    //         return transcript;
+    //     }
+    // }
 
 	public String line() {
         synchronized (stateCacheMutex) {
@@ -198,21 +290,83 @@ public class GameState {
         }
 	}
 
-    public void nextLine() {
-        synchronized (stateCacheMutex) {
-            lineIdx = Math.min(activeScene.lines.size() - 1, lineIdx + 1);
+    public Selection selection() {
+        return activeSelection;
+    }
+
+    public boolean isSelectionActive() {
+        return isSelectionActive;
+    }
+
+    private void findNextRenderableContent() throws GameScriptException {
+        lineIdx = Math.min(activeScene.content.size() - 1, lineIdx + 1);
+        while (!(activeScene.content.get(lineIdx) instanceof Line || activeScene.content.get(lineIdx) instanceof Selection)) {
+            SceneContent content = activeScene.content.get(lineIdx);
+            if (content instanceof Redirect redirect) {
+                if (!scenes.containsKey(redirect.targetSceneId)) {
+                    throw new GameScriptException(redirect.lineNum, "Target scene does not exist");
+                }
+                activeScene = scenes.get(redirect.targetSceneId);
+                lineIdx = -1;
+                findNextRenderableContent();
+            } else if (content instanceof Label) {
+                lineIdx = Math.min(activeScene.content.size() - 1, lineIdx + 1);
+            }
         }
-        updateStateCache();
+    }
+
+    public void nextLine() throws GameScriptException {
+        // TODO: If the first line in a scene is a selection, the last line might be wrong
+        int oldIdx = lineIdx;
+        GameScene oldScene = activeScene;
+        synchronized (stateCacheMutex) {
+            findNextRenderableContent();
+        }
+        updateStateCache(oldScene, oldIdx);
+    }
+
+    private void findLastRenderableContent() {
+        int lastSafeIdx = lineIdx;
+        lineIdx = Math.max(0, lineIdx - 1);
+        // In theory there shouldn't be >1 labels in a row, but theoretically you could have a stack of them
+        // In this case, skip all of the labels unless we hit a selection, in which case we abort going to the
+        // last line and default to the last "safe" renderable line.
+        while (activeScene.content.get(lineIdx) instanceof Label) {
+            lineIdx = Math.max(0, lineIdx - 1);
+            if (activeScene.content.get(lineIdx) instanceof Selection || activeScene.content.get(lineIdx) instanceof Redirect) {
+                lineIdx = lastSafeIdx;
+                break;
+            }
+        }
     }
 
     public void lastLine() {
+        int oldIdx = lineIdx;
+        GameScene oldScene = activeScene;
         synchronized (stateCacheMutex) {
-            lineIdx = Math.max(0, lineIdx - 1);
+            findLastRenderableContent();
         }
-        updateStateCache();
+        if (lineIdx != oldIdx) {
+            updateStateCache(oldScene, oldIdx);
+        }
     }
 
     public static record Transcript(List<TranscriptLine> lines) { }
 
     public static record TranscriptLine(String charId, Color color, String line, boolean isItalics) { }
+
+    public void gotoLabel(String target) throws GameScriptException {
+        for (int idx = 0; idx < activeScene.content.size(); idx++) {
+            if (activeScene.content.get(idx) instanceof Label label && label.value.equalsIgnoreCase(target)) {
+                lineIdx = idx;
+                synchronized (stateCacheMutex) {
+                    findNextRenderableContent();
+                }
+                updateStateCache(null, -1);
+                return;
+            }
+        }
+
+        throw new GameScriptException(activeScene.content.get(lineIdx).lineNum, String.format("Failed to find target label in scene: %s", target));
+    }
 }

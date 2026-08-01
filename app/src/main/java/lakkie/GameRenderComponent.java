@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
+import lakkie.state.GameScriptException;
 import lakkie.state.GameState;
 import lakkie.state.GameState.Transcript;
 import lakkie.state.GameState.TranscriptLine;
@@ -25,6 +26,7 @@ public class GameRenderComponent extends JPanel {
     private Thread uiDrawThread = null;
     private boolean drawTranscript = false;
     private final GameState state;
+    private int currentSelectionIdx = -1;
 
     public GameRenderComponent(GameState state) {
         super();
@@ -162,7 +164,7 @@ public class GameRenderComponent extends JPanel {
         g.fillRect(0, 0, getWidth(), getHeight());
 
         if (drawTranscript) {
-            doDrawTranscript(g2d, state.getTranscript());
+            // doDrawTranscript(g2d, state.getTranscript());
             return;
         }
 
@@ -189,8 +191,9 @@ public class GameRenderComponent extends JPanel {
         StringBuilder nextLine = new StringBuilder();
         int numLines = 0;
         if (state.charImg() != null) {
-            int imgWidth = getWidth() / 3 - 32;
             int imgHeight = getHeight() - 48 * 6 - 32;
+            float imgAspectRatio = (float)state.charImg().getWidth() / state.charImg().getHeight();
+            int imgWidth = (int)(imgAspectRatio * imgHeight);
             if (state.charIsRight()) {
                 g2d.drawImage(state.charImg(), getWidth() - imgWidth - 32, 32, imgWidth, imgHeight, null);
             } else {
@@ -216,6 +219,17 @@ public class GameRenderComponent extends JPanel {
         }
         if (nextLine.length() > 0) {
             g2d.drawString(nextLine.toString(), 16, getHeight() - 48 * 4 + numLines++ * 48);
+        }
+
+        if (state.selection() != null) {
+            for (int selectIdx = 0; selectIdx < state.selection().options.size(); selectIdx++) {
+                String selectDisplay = state.selection().options.get(selectIdx).display;
+                if (selectIdx == currentSelectionIdx) {
+                    g2d.drawString(String.format("> %s", selectDisplay), 16, 16 + 48 + 48 * selectIdx);
+                } else {
+                    g2d.drawString(selectDisplay, 16, 16 + 48 + 48 * selectIdx);
+                }
+            }
         }
     }
 
@@ -250,5 +264,26 @@ public class GameRenderComponent extends JPanel {
             return;
         }
         transcriptYOffset += amount;
+    }
+
+    public void moveSelectionDown() {
+        if (currentSelectionIdx == -1) {
+            currentSelectionIdx = 0;
+        } else {
+            currentSelectionIdx = Math.min(currentSelectionIdx + 1, state.selection().options.size() - 1);
+        }
+    }
+
+    public void moveSelectionUp() {
+        if (currentSelectionIdx == -1) {
+            currentSelectionIdx = 0;
+        } else {
+            currentSelectionIdx = Math.max(currentSelectionIdx - 1, 0);
+        }
+    }
+
+    public void chooseSelection() throws GameScriptException {
+        state.gotoLabel(state.selection().options.get(currentSelectionIdx).label);
+        currentSelectionIdx = -1;
     }
 }

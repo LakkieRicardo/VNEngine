@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Game",
+            "request": "launch",
+            "mainClass": "lakkie.AppEntry",
+            "projectName": "app"
+        },
+        {
+            "type": "java",
+            "name": "Launch Scripter Tool",
+            "request": "launch",
+            "mainClass": "lakkie.AppEntry",
+            "args": "scripter",
+            "projectName": "app"
+        }
+    ]
+}
