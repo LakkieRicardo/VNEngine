@@ -16,6 +16,15 @@ public class SceneContent {
         this.lineNum = lineNum;
     }
 
+    public static class ShowChar extends SceneContent {
+        public String charId;
+        public CharacterPos pos;
+
+        public ShowChar(int lineNum) {
+            super(lineNum);
+        }
+    }
+
     public static class Line extends SceneContent {
         public String line;
         public String charId;

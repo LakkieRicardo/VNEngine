@@ -39,6 +39,6 @@ application {
 
 tasks.jar {
     manifest {
-        attributes["Main-Class"] = "lakkie.GameFrame"
+        attributes["Main-Class"] = "lakkie.AppEntry"
     }
 }

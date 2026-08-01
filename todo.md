@@ -1,0 +1,4 @@
+- [ ] text loading animation
+- [ ] show multiple characters at a time
+- [ ] fix F2
+- [ ] have a keyboard option for every interaction and a mouse interaction

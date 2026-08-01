@@ -1,5 +1,6 @@
 # Test scene w/o choices
 
+# Character definitions (these are essentially macros for "Line")
 Char MC
     SetCharName You
     SetCharColor 255,255,255
@@ -7,7 +8,7 @@ Char MC
 Char DM
     SetCharName The Doorman
     SetCharColor 108,40,51
-    SetCharRight
+    #SetCharRight
     AddExpression Default,/doorman.png
 Char NR
     SetCharName _
@@ -17,16 +18,18 @@ Char NR
 Char PC
     SetCharName Pocket
     SetCharColor 48,82,47
-    SetCharRight
+    #SetCharRight
     AddExpression Default,/pocket.png
 Char MN
     SetCharName Mina
     SetCharColor 103,13,15
-    SetCharRight
+    #SetCharRight
     AddExpression Default,/cat.png
 
 Scene Intro_Baroness
     Backdrop /baroness.png
+    # Uses the default expression initially, can be changed later
+    ShowChar NR,Left
     Line NR,Perhaps a night or two away from your parents isn't such a bad idea.
     Line NR,Searching for your brother won't yield any results staying nestled with your parents.
     Line NR,You walk through the streets on your way to the Baroness, a strange yet welcoming hotel.
@@ -39,6 +42,7 @@ Scene Intro_Baroness
     Line NR,No immediate conversations strike you as interesting.
     Line NR,As you get your bearings and walk towards the front desk, a tall man with ginger hair approaches you.
     Line NR,His attire suggests that he works here and his piercing blue eyes gaze at you.
+    ShowChar DM,Right
     Line DM,Welcome to the Baroness.
     Line NR,His voice is calm and collected.
     Line NR,Everything about him seems too in place.

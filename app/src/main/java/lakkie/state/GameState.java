@@ -6,6 +6,7 @@ import lakkie.state.SceneContent.Line;
 import lakkie.state.SceneContent.Redirect;
 import lakkie.state.SceneContent.Selection;
 import lakkie.state.SceneContent.SelectionOption;
+import lakkie.state.SceneContent.ShowChar;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -80,9 +81,6 @@ public class GameState {
                                             Integer.parseInt(args.get(1)),
                                             Integer.parseInt(args.get(2)));
                     currentChar.color = color;
-                } else if (command.equalsIgnoreCase("SetCharRight")) {
-                    if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
-                    currentChar.isRightSide = true;
                 } else if (command.equalsIgnoreCase("SetCharTextItalics")) {
                     if (currentChar == null) throw new GameScriptException(lineNum, "No character in scope");
                     currentChar.isItalics = true;
@@ -143,6 +141,15 @@ public class GameState {
                     expr.name = args.get(0);
                     expr.sprite = ImageIO.read(GameFrame.class.getResourceAsStream(args.get(1)));
                     currentChar.expressions.put(expr.name, expr);
+                } else if (command.equalsIgnoreCase("ShowChar")) {
+                    List<String> args = parseArguments(2, line);
+                    ShowChar showChar = new ShowChar(lineNum);
+                    showChar.charId = args.get(0);
+                    showChar.pos = CharacterPos.fromString(args.get(1));
+                    if (showChar.pos == null) {
+                        throw new GameScriptException(lineNum, "Failed to parse character position: " + args.get(1));
+                    }
+                    currentScene.content.add(showChar);
                 } else {
                     throw new GameScriptException(lineNum, "Failed to parse command");
                 }
@@ -154,7 +161,13 @@ public class GameState {
         }
 
         // TODO: This implies the first content in the script needs to be a Line which might not be true
-        updateStateCache(null, -1);
+        try {
+            lineIdx = -1;
+            findNextRenderableContent();
+            updateState(null, -1);
+        } catch (Exception ex) {
+            System.err.println("Failed to find a line to start the game with.");
+        }
         long timeToLoad = System.currentTimeMillis() - startTime;
         System.out.printf("Time to load script: %.2f sec\n", (float)timeToLoad / 1000);
     }
@@ -181,14 +194,21 @@ public class GameState {
     private Object stateCacheMutex = new Object();
     private Color currentCharColor = Color.white;
     private String currentLine = "", currentCharName = "";
-    private boolean currentLineItalics = false, currentCharIsRight = false;
-    private BufferedImage currentCharImg = null, currentBackdrop = null;
+    private boolean currentLineItalics = false;
+    private BufferedImage currentBackdrop = null;
+    private List<CharRenderable> charRends = new ArrayList<>();
 
     private boolean isSelectionActive = false;
     private Selection activeSelection;
     // private Transcript transcript;
 
-    private void updateStateCache(GameScene oldScene, int oldIdx) {
+    /**
+     * Updates the current state based on the current line index and what the last line/scene was. This state is essentially
+     * a ViewModel that tells the renderer what to show.
+     * @param oldScene
+     * @param oldIdx
+     */
+    private void updateState(GameScene oldScene, int oldIdx) {
         if (oldIdx != -1 && oldScene != null) {
             assert oldScene.content.get(oldIdx) instanceof Line;
         }
@@ -205,8 +225,6 @@ public class GameState {
                     currentCharColor = Color.white;
                     currentLine = "";
                     currentLineItalics = false;
-                    currentCharIsRight = false;
-                    currentCharImg = null;
                     currentBackdrop = activeScene.backdrop;
                     currentCharName = "";
                     return;
@@ -221,8 +239,6 @@ public class GameState {
             currentCharColor = character.color;
             currentLine = line.line;
             currentLineItalics = character.isItalics;
-            currentCharIsRight = character.isRightSide;
-            currentCharImg = character.expressions.get(line.expression).sprite;
             currentBackdrop = activeScene.backdrop;
             currentCharName = character.name;
             if (content instanceof Selection selection) {
@@ -272,23 +288,17 @@ public class GameState {
         }
 	}
 
-	public boolean charIsRight() {
-        synchronized (stateCacheMutex) {
-		    return currentCharIsRight;
-        }
-	}
-
-    public BufferedImage charImg() {
-        synchronized (stateCacheMutex) {
-            return currentCharImg;
-        }
-    }
-
 	public String charName() {
         synchronized (stateCacheMutex) {
             return currentCharName;
         }
 	}
+
+    public List<CharRenderable> charRenderables() {
+        synchronized (stateCacheMutex) {
+            return charRends;
+        }
+    }
 
     public Selection selection() {
         return activeSelection;
@@ -307,10 +317,18 @@ public class GameState {
                     throw new GameScriptException(redirect.lineNum, "Target scene does not exist");
                 }
                 activeScene = scenes.get(redirect.targetSceneId);
+                charRends.clear();
                 lineIdx = -1;
                 findNextRenderableContent();
             } else if (content instanceof Label) {
                 lineIdx = Math.min(activeScene.content.size() - 1, lineIdx + 1);
+            } else if (content instanceof ShowChar showChar) {
+                lineIdx = Math.min(activeScene.content.size() - 1, lineIdx + 1);
+                CharRenderable rend = new CharRenderable();
+                // TODO: Needs to be some analysis in the script for this error before we get to it
+                rend.img = chars.get(showChar.charId).expressions.get("Default").sprite;
+                rend.pos = showChar.pos;
+                charRends.add(rend);
             }
         }
     }
@@ -322,7 +340,7 @@ public class GameState {
         synchronized (stateCacheMutex) {
             findNextRenderableContent();
         }
-        updateStateCache(oldScene, oldIdx);
+        updateState(oldScene, oldIdx);
     }
 
     private void findLastRenderableContent() {
@@ -331,11 +349,23 @@ public class GameState {
         // In theory there shouldn't be >1 labels in a row, but theoretically you could have a stack of them
         // In this case, skip all of the labels unless we hit a selection, in which case we abort going to the
         // last line and default to the last "safe" renderable line.
-        while (activeScene.content.get(lineIdx) instanceof Label) {
-            lineIdx = Math.max(0, lineIdx - 1);
+        while (activeScene.content.get(lineIdx) instanceof Label || activeScene.content.get(lineIdx) instanceof ShowChar) {
             if (activeScene.content.get(lineIdx) instanceof Selection || activeScene.content.get(lineIdx) instanceof Redirect) {
+                lineIdx = Math.max(0, lineIdx - 1);
                 lineIdx = lastSafeIdx;
                 break;
+            } else if (activeScene.content.get(lineIdx) instanceof ShowChar showChar) {
+                // Find the corresponding show char
+                // TODO: Is this tech debt?
+                CharRenderable existing = null;
+                for (CharRenderable rend : charRends) {
+                    if (rend.img == chars.get(showChar.charId).expressions.get("Default").sprite && rend.pos == showChar.pos) {
+                        existing = rend;
+                        break;
+                    }
+                }
+                charRends.remove(existing);
+                lineIdx = Math.max(0, lineIdx - 1);
             }
         }
     }
@@ -347,7 +377,7 @@ public class GameState {
             findLastRenderableContent();
         }
         if (lineIdx != oldIdx) {
-            updateStateCache(oldScene, oldIdx);
+            updateState(oldScene, oldIdx);
         }
     }
 
@@ -362,7 +392,7 @@ public class GameState {
                 synchronized (stateCacheMutex) {
                     findNextRenderableContent();
                 }
-                updateStateCache(null, -1);
+                updateState(null, -1);
                 return;
             }
         }
