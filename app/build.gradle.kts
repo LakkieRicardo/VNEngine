@@ -18,8 +18,6 @@ repositories {
 }
 
 dependencies {
-    // Use JUnit test framework.
-    testImplementation(libs.junit)
 
     // This dependency is used by the application.
     implementation(libs.guava)
